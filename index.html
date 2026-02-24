@@ -1,0 +1,2233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lathe Projects for Others</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  :root { --ink: #1a1a18; --paper: #f5f0e8; --clay: #c4633a; --sage: #5a7a60; --dust: #b8a898; --light: #ede8dc; --warm: #e8dfd0; }
+  body { background: var(--paper); font-family: 'DM Sans', sans-serif; color: var(--ink); min-height: 100vh; padding: 40px 20px; }
+  .page { max-width: 700px; margin: 0 auto; }
+  .page-header { border-bottom: 2px solid var(--ink); padding-bottom: 20px; margin-bottom: 36px; }
+  .pre-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--clay); margin-bottom: 8px; }
+  h1 { font-family: 'Playfair Display', serif; font-size: 36px; line-height: 1.1; }
+  .subtitle { font-size: 14px; color: #6a6058; margin-top: 8px; font-weight: 300; }
+  .section { margin-bottom: 40px; }
+  .section-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #6a6058; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--warm); }
+  .project-grid { display: flex; flex-direction: column; gap: 12px; }
+  .project { background: var(--light); border: 1.5px solid #d8d0c4; padding: 20px 22px; display: grid; grid-template-columns: auto 1fr auto; align-items: start; gap: 16px; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+  .project:hover { border-color: var(--clay); background: #ece5d8; }
+  .project.expanded { border-color: var(--ink); background: #ece5d8; }
+  .project-num { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--dust); margin-top: 3px; }
+  .project-name { font-size: 16px; font-weight: 600; color: var(--ink); margin-bottom: 3px; }
+  .project-who { font-size: 12.5px; color: var(--clay); font-family: 'DM Mono', monospace; letter-spacing: 0.05em; }
+  .project-toggle { font-size: 18px; color: var(--dust); transition: transform 0.25s; user-select: none; margin-top: 2px; }
+  .project.expanded .project-toggle { transform: rotate(45deg); color: var(--ink); }
+  .project-body { grid-column: 2 / 3; }
+  .project-detail { font-size: 13.5px; line-height: 1.65; color: #4a4540; max-height: 0; overflow: hidden; transition: max-height 0.35s ease, margin-top 0.2s ease; }
+  .project.expanded .project-detail { max-height: 600px; margin-top: 10px; }
+  .chips { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.08em; padding: 4px 10px; border: 1px solid #8a7e70; color: #4a4540; display: inline-block; cursor: pointer; transition: background 0.15s, color 0.15s; user-select: none; }
+  .chip:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .chip.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .project-img-wrap { grid-column: 1 / -1; max-height: 0; overflow: hidden; transition: max-height 0.4s ease, margin-top 0.2s ease; }
+  .project.expanded .project-img-wrap { max-height: 260px; margin-top: 14px; }
+  .project-img { width: 100%; height: 200px; display: block; cursor: zoom-in; transition: opacity 0.15s; }
+  .project-img:hover { opacity: 0.88; }
+  .project-img-footer { display: flex; align-items: center; justify-content: space-between; padding: 6px 0 0; }
+  .project-img-caption { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #6a6058; }
+  .project-video-link { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--clay); text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 1px; white-space: nowrap; transition: color 0.15s; }
+  .project-video-link:hover { color: var(--ink); }
+  .project-video-link::before { content: '▶ '; font-size: 8px; }
+  .info-panel { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, margin-top 0.2s ease; }
+  .info-panel.visible { max-height: 300px; margin-top: 12px; }
+  .info-inner { background: var(--paper); border-left: 3px solid var(--clay); padding: 12px 16px; font-size: 13px; line-height: 1.65; color: #3a3530; }
+  .info-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--clay); margin-bottom: 5px; }
+  /* ── Donate Section ── */
+  .donate-section { margin-top: 36px; padding: 24px 26px; background: var(--light); border: 1.5px solid #d8d0c4; }
+  .donate-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--clay); margin-bottom: 8px; }
+  .donate-heading { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--ink); margin-bottom: 8px; }
+  .donate-text { font-size: 13.5px; line-height: 1.65; color: #4a4540; margin-bottom: 18px; }
+  .donate-btn-wrap { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .donate-btn { display: inline-flex; align-items: center; gap: 8px; background: #0070ba; color: #fff; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; padding: 12px 22px; text-decoration: none; border: none; cursor: pointer; transition: background 0.2s; }
+  .donate-btn:hover { background: #005ea6; }
+  .donate-btn svg { flex-shrink: 0; }
+  .donate-note { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.1em; color: #8a7e70; text-transform: uppercase; }
+
+  .footer-note { margin-top: 36px; padding: 22px 24px; background: var(--sage); }
+  .footer-note .fn-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.8); margin-bottom: 7px; }
+  .footer-note p { font-size: 13.5px; line-height: 1.65; color: rgba(255,255,255,0.88); }
+
+  /* ── Header Summary ── */
+  .header-summary { display: flex; align-items: center; gap: 14px; margin-top: 16px; padding-top: 14px; border-top: 1px solid #d8d0c4; flex-wrap: wrap; }
+  .summary-stat { display: flex; align-items: baseline; gap: 5px; }
+  .summary-num { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--ink); line-height: 1; }
+  .summary-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: #6a6058; }
+  .summary-divider { width: 1px; height: 20px; background: #d0c8bc; margin: 0 2px; }
+  .summary-link { text-decoration: none; cursor: pointer; padding: 3px 6px; margin: -3px -6px; border-bottom: 1.5px solid transparent; transition: border-color 0.15s, opacity 0.15s; }
+  .summary-link:hover { border-bottom-color: currentColor; opacity: 0.8; }
+  .summary-link .summary-label { transition: color 0.15s; }
+
+  /* ── Seasonal section accent ── */
+  .section-seasonal .section-label { color: var(--sage); }
+  .section-seasonal .section-label::after { background: #c8dcc8; }
+  .section-seasonal .project { border-color: #c8dcc8; }
+  .section-seasonal .project:hover { border-color: var(--sage); background: #eaf0ea; }
+  .section-seasonal .project.expanded { border-color: var(--sage); background: #eaf0ea; }
+  .section-seasonal .project-who { color: var(--sage); }
+
+  /* ── Lightbox ── */
+  #lightbox { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(20,18,14,0.88); align-items: center; justify-content: center; }
+  #lightbox.active { display: flex; }
+  #lb-stage { position: relative; width: 90vw; max-width: 800px; user-select: none; }
+  #lb-svg-wrap { overflow: hidden; border: 1.5px solid rgba(255,255,255,0.12); background: #1e1a14; touch-action: none; cursor: grab; }
+  #lb-svg-wrap.grabbing { cursor: grabbing; }
+  #lb-svg-wrap svg { display: block; width: 100%; transform-origin: 0 0; transition: transform 0.05s linear; }
+  #lb-controls { display: flex; align-items: center; gap: 10px; margin-top: 10px; justify-content: center; }
+  .lb-btn { font-family: 'DM Mono', monospace; font-size: 18px; width: 36px; height: 36px; border: 1.5px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.07); color: var(--paper); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; border-radius: 0; }
+  .lb-btn:hover { background: rgba(255,255,255,0.18); }
+  #lb-scale-label { font-family: 'DM Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.45); width: 42px; text-align: center; }
+  #lb-close { position: absolute; top: -38px; right: 0; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: rgba(255,255,255,0.45); background: none; border: none; cursor: pointer; padding: 4px 8px; }
+  #lb-close:hover { color: var(--paper); }
+  #lb-caption { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.35); text-align: center; margin-top: 8px; }
+  #lb-hint { font-family: 'DM Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.22); text-align: center; margin-top: 4px; letter-spacing: 0.1em; }
+
+  /* ── Checklist Section ── */
+  .checklist-section { margin-bottom: 40px; }
+  .checklist-toggle { display: flex; align-items: center; justify-content: space-between; cursor: pointer; padding: 14px 20px; background: var(--ink); color: var(--paper); user-select: none; transition: background 0.2s; }
+  .checklist-toggle:hover { background: #2e2e2a; }
+  .checklist-toggle-left { display: flex; align-items: center; gap: 14px; }
+  .checklist-toggle-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.75); }
+  .checklist-toggle-title { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--paper); }
+  .checklist-toggle-arrow { font-size: 18px; color: rgba(255,255,255,0.4); transition: transform 0.3s; }
+  .checklist-section.open .checklist-toggle-arrow { transform: rotate(45deg); }
+  .checklist-progress-wrap { display: flex; align-items: center; gap: 10px; }
+  .checklist-progress-bar { width: 80px; height: 3px; background: rgba(255,255,255,0.15); position: relative; overflow: hidden; }
+  .checklist-progress-fill { height: 100%; background: var(--clay); transition: width 0.35s ease; width: 0%; }
+  .checklist-progress-text { font-family: 'DM Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.35); white-space: nowrap; }
+
+  .checklist-body { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; background: var(--light); border: 1.5px solid var(--ink); border-top: none; }
+  .checklist-section.open .checklist-body { max-height: 2000px; }
+
+  .checklist-inner { padding: 24px 24px 28px; }
+  .checklist-intro { font-size: 13px; color: #3a3530; line-height: 1.65; margin-bottom: 22px; border-left: 3px solid var(--clay); padding-left: 14px; }
+
+  .checklist-categories { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 540px) { .checklist-categories { grid-template-columns: 1fr; } }
+
+  .checklist-cat { background: var(--paper); border: 1px solid #d0c8bc; padding: 16px 18px; }
+  .checklist-cat-header { display: flex; align-items: center; gap: 10px; margin-bottom: 13px; padding-bottom: 10px; border-bottom: 1px solid #ddd6cc; }
+  .checklist-cat-icon { font-size: 16px; }
+  .checklist-cat-title { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--clay); }
+  .checklist-cat-count { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--dust); margin-left: auto; }
+
+  .checklist-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 9px; cursor: pointer; }
+  .checklist-item:last-child { margin-bottom: 0; }
+  .checklist-item input[type="checkbox"] { display: none; }
+  .checklist-box { width: 14px; height: 14px; min-width: 14px; border: 1.5px solid #a09080; margin-top: 2px; display: flex; align-items: center; justify-content: center; transition: background 0.15s, border-color 0.15s; }
+  .checklist-item.checked .checklist-box { background: var(--ink); border-color: var(--ink); }
+  .checklist-item.checked .checklist-box::after { content: '✓'; font-size: 9px; color: var(--paper); line-height: 1; }
+  .checklist-item-label { font-size: 12.5px; color: #4a4540; line-height: 1.5; transition: color 0.15s; }
+  .checklist-item.checked .checklist-item-label { color: #4a4035; text-decoration: line-through; text-decoration-color: #7a6e62; }
+  .checklist-item-note { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--dust); display: block; margin-top: 1px; }
+
+  .checklist-actions { display: flex; gap: 12px; margin-top: 20px; padding-top: 18px; border-top: 1px solid #ddd6cc; align-items: center; }
+  .checklist-action-btn { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; padding: 7px 14px; border: 1.5px solid #a09080; background: transparent; color: #5a5248; cursor: pointer; transition: all 0.15s; }
+  .checklist-action-btn:hover { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  .checklist-action-btn.primary { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  .checklist-action-btn.primary:hover { background: var(--clay); border-color: var(--clay); }
+  .checklist-saved-note { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--sage); margin-left: auto; opacity: 0; transition: opacity 0.4s; }
+  .checklist-saved-note.show { opacity: 1; }
+
+  /* ── Timber Properties Section ── */
+  .timber-section { margin-bottom: 40px; }
+  .timber-toggle { display: flex; align-items: center; justify-content: space-between; cursor: pointer; padding: 14px 20px; background: #3d2b1a; color: var(--paper); user-select: none; transition: background 0.2s; }
+  .timber-toggle:hover { background: #4d3824; }
+  .timber-toggle-left { display: flex; align-items: center; gap: 14px; }
+  .timber-toggle-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.6); }
+  .timber-toggle-title { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--paper); }
+  .timber-toggle-arrow { font-size: 18px; color: rgba(255,255,255,0.4); transition: transform 0.3s; }
+  .timber-section.open .timber-toggle-arrow { transform: rotate(45deg); }
+  .timber-body { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; background: var(--light); border: 1.5px solid #3d2b1a; border-top: none; }
+  .timber-section.open .timber-body { max-height: 6000px; }
+  .timber-inner { padding: 24px 24px 28px; }
+  .timber-intro { font-size: 13px; color: #3a3530; line-height: 1.65; margin-bottom: 22px; border-left: 3px solid #8b5e3c; padding-left: 14px; }
+  .timber-grid { display: flex; flex-direction: column; gap: 16px; }
+  .timber-card { background: var(--paper); border: 1.5px solid #d8d0c4; overflow: hidden; }
+  .timber-card-header { display: flex; align-items: center; gap: 0; }
+  .timber-swatch { width: 8px; align-self: stretch; flex-shrink: 0; }
+  .timber-card-title-row { display: flex; align-items: baseline; gap: 12px; padding: 14px 16px 12px; flex: 1; border-bottom: 1px solid #e0d8cc; }
+  .timber-name { font-family: 'Playfair Display', serif; font-size: 17px; color: var(--ink); }
+  .timber-latin { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--dust); letter-spacing: 0.08em; }
+  .timber-badge { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.1em; padding: 3px 8px; border: 1px solid; margin-left: auto; text-transform: uppercase; flex-shrink: 0; }
+  .timber-badge.domestic { color: var(--sage); border-color: var(--sage); }
+  .timber-badge.exotic { color: var(--clay); border-color: var(--clay); }
+  .timber-props { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; }
+  @media (max-width: 520px) { .timber-props { grid-template-columns: 1fr; } }
+  .timber-prop { padding: 13px 16px; border-right: 1px solid #e8e0d4; font-size: 12.5px; line-height: 1.6; color: #4a4540; }
+  .timber-prop:last-child { border-right: none; }
+  .timber-prop-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: #8a7a6a; margin-bottom: 5px; }
+  .timber-projects-used { padding: 10px 16px; background: rgba(0,0,0,0.03); border-top: 1px solid #e0d8cc; font-family: 'DM Mono', monospace; font-size: 10px; color: #7a6a5a; letter-spacing: 0.05em; }
+  .timber-projects-used span { color: var(--clay); }
+  .timber-index { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+  .timber-index-link { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.08em; padding: 5px 11px; border: 1px solid #b0a090; color: #4a4540; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; transition: background 0.15s, color 0.15s, border-color 0.15s; }
+  .timber-index-link:hover { background: #3d2b1a; color: var(--paper); border-color: #3d2b1a; }
+  .timber-index-link .ti-swatch { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+  .timber-index-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: #8a7a6a; margin-bottom: 8px; }
+  .timber-return { display: flex; justify-content: flex-end; padding: 10px 14px; border-top: 2px solid #3d2b1a; background: #3d2b1a; }
+  .timber-return-link { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.85); text-decoration: none; display: inline-flex; align-items: center; gap: 7px; padding: 5px 12px; border: 1px solid rgba(255,255,255,0.25); transition: background 0.15s, color 0.15s, border-color 0.15s; animation: timber-return-pulse 2.2s ease-in-out infinite; }
+  .timber-return-link:hover { background: rgba(255,255,255,0.12); color: #fff; border-color: rgba(255,255,255,0.55); animation: none; }
+  .timber-return-link::before { content: '↑'; font-size: 13px; line-height: 1; }
+  @keyframes timber-return-pulse {
+    0%   { opacity: 1;    border-color: rgba(255,255,255,0.25); }
+    45%  { opacity: 0.35; border-color: rgba(255,255,255,0.05); }
+    55%  { opacity: 0.35; border-color: rgba(255,255,255,0.05); }
+    100% { opacity: 1;    border-color: rgba(255,255,255,0.25); }
+  }
+
+  /* ── Lathe Selector / Decision Tree ── */
+  .selector-section { margin-bottom: 40px; }
+  .selector-toggle { display: flex; align-items: center; justify-content: space-between; cursor: pointer; padding: 14px 20px; background: var(--clay); color: var(--paper); user-select: none; transition: background 0.2s; }
+  .selector-toggle:hover { background: #b35530; }
+  .selector-toggle-left { display: flex; align-items: center; gap: 14px; }
+  .selector-toggle-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.7); }
+  .selector-toggle-title { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--paper); }
+  .selector-toggle-arrow { font-size: 18px; color: rgba(255,255,255,0.5); transition: transform 0.3s; }
+  .selector-section.open .selector-toggle-arrow { transform: rotate(45deg); }
+  .selector-body { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; background: var(--light); border: 1.5px solid var(--clay); border-top: none; }
+  .selector-section.open .selector-body { max-height: 2000px; }
+  .selector-inner { padding: 28px 24px 32px; }
+  .selector-intro { font-size: 13px; color: #3a3530; line-height: 1.65; margin-bottom: 24px; border-left: 3px solid var(--clay); padding-left: 14px; }
+
+  /* Decision tree steps */
+  .dt-step { display: none; }
+  .dt-step.active { display: block; animation: dtFadeIn 0.3s ease; }
+  @keyframes dtFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  .dt-question { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--ink); margin-bottom: 16px; line-height: 1.35; }
+  .dt-options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .dt-option { background: transparent; border: 1.5px solid #c8b898; padding: 12px 16px; text-align: left; font-family: 'DM Sans', sans-serif; font-size: 13.5px; color: #4a4540; cursor: pointer; transition: all 0.18s ease; display: flex; align-items: center; gap: 10px; }
+  .dt-option:hover { border-color: var(--clay); background: #ece5d8; color: var(--ink); }
+  .dt-option::before { content: '›'; color: var(--clay); font-size: 18px; line-height: 1; flex-shrink: 0; }
+
+  /* Progress breadcrumb */
+  .dt-breadcrumb { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #8a7a68; margin-bottom: 18px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .dt-breadcrumb-sep { color: #c0b09a; }
+
+  /* Back button */
+  .dt-back { background: transparent; border: none; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #8a7a68; cursor: pointer; padding: 0; text-decoration: underline; margin-top: 4px; }
+  .dt-back:hover { color: var(--ink); }
+
+  /* Result card */
+  .dt-result { border: 1.5px solid var(--clay); background: var(--paper); overflow: hidden; }
+  .dt-result-header { background: var(--clay); padding: 16px 20px; }
+  .dt-result-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.7); margin-bottom: 4px; }
+  .dt-result-title { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--paper); font-weight: 700; margin-bottom: 3px; }
+  .dt-result-subtitle { font-family: 'DM Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.65); letter-spacing: 0.06em; }
+  .dt-result-body { padding: 20px 22px; }
+  .dt-result-list { margin: 0 0 16px 0; padding-left: 18px; }
+  .dt-result-list li { font-size: 13px; color: #4a4540; line-height: 1.6; margin-bottom: 6px; }
+  .dt-result-tip { background: var(--light); border-left: 3px solid var(--clay); padding: 10px 14px; font-size: 12.5px; color: #5a4e42; line-height: 1.6; margin-bottom: 20px; font-style: italic; }
+  .dt-restart { background: transparent; border: 1.5px solid #a09080; padding: 8px 18px; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #5a5248; cursor: pointer; transition: all 0.15s; }
+  .dt-restart:hover { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+  /* Progress bar */
+  .dt-progress-wrap { margin-bottom: 20px; }
+  .dt-progress-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #8a7a68; margin-bottom: 5px; display: flex; justify-content: space-between; }
+  .dt-progress-bar { height: 3px; background: #d8d0c4; }
+  .dt-progress-fill { height: 100%; background: var(--clay); transition: width 0.4s ease; width: 0%; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="page-header">
+    <div class="pre-label">Wood Lathe — Gift Projects</div>
+    <h1>Projects That Serve Others</h1>
+    <div class="subtitle">Select a project to expand. Select a tag to read notes.</div>
+    <div class="header-summary">
+      <div class="summary-stat"><span class="summary-num" id="stat-total">13</span><span class="summary-label">Projects</span></div>
+      <div class="summary-divider"></div>
+      <div class="summary-stat"><span class="summary-num">5</span><span class="summary-label">Sections</span></div>
+      <div class="summary-divider"></div>
+      <a href="#section-beginner" class="summary-stat summary-link">
+        <span class="summary-num" style="color:#5a7a60">3</span>
+        <span class="summary-label">Beginner ↓</span>
+      </a>
+      <a href="#section-intermediate" class="summary-stat summary-link">
+        <span class="summary-num" style="color:#c4633a">5</span>
+        <span class="summary-label">Intermediate ↓</span>
+      </a>
+      <a href="#section-advanced" class="summary-stat summary-link">
+        <span class="summary-num" style="color:#1a1a18">5</span>
+        <span class="summary-label">Advanced ↓</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="section" id="section-beginner">
+    <div class="section-label">Beginner — Everyday Useful</div>
+    <div class="project-grid">
+      <div class="project" onclick="toggleCard(this, event)">
+        <div class="project-num">01</div>
+        <div class="project-body">
+          <div class="project-name">Rolling Pin</div>
+          <div class="project-who">For: the baker in your life</div>
+          <div class="project-detail">
+            One of the most satisfying beginner projects. French-style (tapered, no handles) are elegant and easy to turn. Choose a tight-grained hardwood like maple or cherry.
+            <div class="chips">
+              <span class="chip" data-key="beginner">Beginner</span>
+              <span class="chip" data-key="spindle">Spindle work</span>
+              <span class="chip" data-key="maple-cherry">Maple / Cherry</span>
+            </div>
+          </div>
+          <div class="info-panel"><div class="info-inner"><div class="info-label"></div><div class="info-text"></div></div></div>
+          <div class="project-img-wrap">
+            <svg class="project-img" viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
+              <rect width="700" height="200" fill="#e8dfd0"/>
+              <!-- flour dusting background -->
+              <ellipse cx="350" cy="160" rx="280" ry="18" fill="#f0ead8" opacity="0.7"/>
+              <!-- wood grain lines on rolling pin body -->
+              <rect x="110" y="82" width="480" height="36" rx="18" fill="#c8a97a"/>
+              <rect x="110" y="86" width="480" height="4" rx="2" fill="#b8956a" opacity="0.5"/>
+              <rect x="110" y="96" width="480" height="3" rx="1.5" fill="#b8956a" opacity="0.4"/>
+              <rect x="110" y="105" width="480" height="2" rx="1" fill="#b8956a" opacity="0.3"/>
+              <rect x="110" y="112" width="480" height="3" rx="1.5" fill="#b8956a" opacity="0.3"/>
+              <!-- tapered ends (French style) -->
+              <ellipse cx="110" cy="100" rx="18" ry="18" fill="#b8956a"/>
+              <ellipse cx="590" cy="100" rx="18" ry="18" fill="#b8956a"/>
+              <!-- highlight -->
+              <rect x="130" y="85" width="440" height="8" rx="4" fill="rgba(255,245,230,0.45)"/>
+              <!-- shadow under pin -->
+              <ellipse cx="350" cy="124" rx="235" ry="7" fill="rgba(90,60,30,0.13)"/>
+              <!-- flour puffs -->
+              <ellipse cx="220" cy="155" rx="38" ry="10" fill="#f5f0e8" opacity="0.8"/>
+              <ellipse cx="350" cy="162" rx="55" ry="11" fill="#f5f0e8" opacity="0.7"/>
+              <ellipse cx="480" cy="156" rx="40" ry="10" fill="#f5f0e8" opacity="0.8"/>
+            </svg>
+            <div class="project-img-footer">
+              <div class="project-img-caption">French-style maple rolling pin — tapered, no handles</div>
+              <a class="project-video-link" href="https://www.youtube.com/results?search_query=wood+lathe+french+rolling+pin+turning" target="_blank" rel="noopener">Watch on YouTube</a>
+            </div>
+          </div>
+        </div>
+        <div class="project-toggle">+</div>
+      </div>
+      <div class="project" onclick="toggleCard(this, event)">
+        <div class="project-num">02</div>
+        <div class="project-body">
+          <div class="project-name">Wooden Spoons and Spatulas</div>
+          <div class="project-who">For: anyone who cooks</div>
+          <div class="project-detail">
+            The handle is turned on the lathe, then the bowl is carved off it. Make a matching set and it becomes a cherished gift. Use a food-safe finish.
+            <div class="chips">
+              <span class="chip" data-key="beg-int">Beginner-Intermediate</span>
+              <span class="chip" data-key="spindle-carve">Spindle + carving</span>
+              <span class="chip" data-key="food-safe">Food-safe finish</span>
+            </div>
+          </div>
+          <div class="info-panel"><div class="info-inner"><div class="info-label"></div><div class="info-text"></div></div></div>
+          <div class="project-img-wrap">
+            <svg class="project-img" viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
+              <rect width="700" height="200" fill="#e2d8c8"/>
+              <!-- three spoons at angles -->
+              <!-- spoon 1 (left, tilted) -->
+              <g transform="rotate(-18, 200, 100)">
+                <rect x="170" y="50" width="14" height="110" rx="7" fill="#c8a060"/>
+                <ellipse cx="177" cy="44" rx="22" ry="16" fill="#c8a060"/>
+                <ellipse cx="177" cy="44" rx="18" ry="12" fill="#d4aa70" opacity="0.5"/>
+                <rect x="173" y="54" width="6" height="4" rx="2" fill="#b8906a" opacity="0.6"/>
+              </g>
+              <!-- spoon 2 (center, straight) -->
+              <g transform="rotate(0, 350, 100)">
+                <rect x="336" y="30" width="14" height="130" rx="7" fill="#a07840"/>
+                <ellipse cx="343" cy="24" rx="24" ry="18" fill="#a07840"/>
+                <ellipse cx="343" cy="24" rx="19" ry="13" fill="#b88a50" opacity="0.5"/>
+                <rect x="339" y="36" width="6" height="4" rx="2" fill="#906030" opacity="0.6"/>
+              </g>
+              <!-- spatula (right, tilted) -->
+              <g transform="rotate(15, 500, 100)">
+                <rect x="490" y="45" width="12" height="120" rx="6" fill="#b89060"/>
+                <rect x="482" y="20" width="28" height="35" rx="4" fill="#b89060"/>
+                <rect x="484" y="22" width="24" height="6" rx="2" fill="#c8a070" opacity="0.5"/>
+                <rect x="484" y="32" width="24" height="3" rx="1.5" fill="#c8a070" opacity="0.4"/>
+                <rect x="490" y="53" width="6" height="3" rx="1.5" fill="#906030" opacity="0.6"/>
+              </g>
+              <!-- wood grain details on handles -->
+              <line x1="175" y1="65" x2="175" y2="155" stroke="#b07840" stroke-width="1" opacity="0.3"/>
+              <line x1="341" y1="42" x2="341" y2="152" stroke="#906030" stroke-width="1" opacity="0.3"/>
+              <!-- surface shadow -->
+              <ellipse cx="350" cy="178" rx="220" ry="10" fill="rgba(80,50,20,0.12)"/>
+            </svg>
+            <div class="project-img-footer">
+              <div class="project-img-caption">Turned handles, carved bowls — finish to food-safe standard</div>
+              <a class="project-video-link" href="https://www.youtube.com/results?search_query=wood+lathe+turned+wooden+spoon+carving" target="_blank" rel="noopener">Watch on YouTube</a>
+            </div>
+          </div>
+        </div>
+        <div class="project-toggle">+</div>
+      </div>
+      <div class="project" onclick="toggleCard(this, event)">
+        <div class="project-num">03</div>
+        <div class="project-body">
+          <div class="project-name">Mug Handles and Knobs</div>
+          <div class="project-who">For: potters, furniture restorers</div>
+          <div class="project-detail">
+            Custom wooden drawer knobs and hand-turned mug handles are fast to turn and endlessly customizable in profile.
+            <div class="chips">
+              <span class="chip" data-key="beginner">Beginner</span>
+              <span class="chip" data-key="faceplate">Faceplate or spindle</span>
+              <span class="chip" data-key="hardwood">Any hardwood</span>
+            </div>
+          </div>
+          <div class="info-panel"><div class="info-inner"><div class="info-label"></div><div class="info-text"></div></div></div>
+          <div class="project-img-wrap">
+            <svg class="project-img" viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
+              <rect width="700" height="200" fill="#ddd5c5"/>
+              <!-- drawer front panel -->
+              <rect x="80" y="50" width="540" height="105" rx="4" fill="#c4b89a"/>
+              <rect x="80" y="50" width="540" height="6" rx="2" fill="#d4c8aa" opacity="0.6"/>
+              <!-- drawer divider lines -->
+              <line x1="260" y1="50" x2="260" y2="155" stroke="#b0a480" stroke-width="1.5" opacity="0.5"/>
+              <line x1="440" y1="50" x2="440" y2="155" stroke="#b0a480" stroke-width="1.5" opacity="0.5"/>
+              <!-- knob 1 — walnut sphere -->
+              <circle cx="170" cy="103" r="22" fill="#6b4226"/>
+              <circle cx="164" cy="97" r="8" fill="rgba(255,220,170,0.25)"/>
+              <circle cx="170" cy="103" r="5" fill="#4a2810"/>
+              <circle cx="170" cy="103" r="2" fill="#2a1408"/>
+              <!-- knob 2 — maple mushroom -->
+              <ellipse cx="350" cy="108" rx="20" ry="12" fill="#d4a860"/>
+              <rect x="344" y="93" width="12" height="18" rx="6" fill="#c89850"/>
+              <ellipse cx="350" cy="93" rx="6" ry="4" fill="#d4a860"/>
+              <ellipse cx="347" cy="90" rx="4" ry="3" fill="rgba(255,240,200,0.4)"/>
+              <!-- knob 3 — cherry cylinder -->
+              <rect x="512" y="87" width="26" height="30" rx="13" fill="#8b3a2a"/>
+              <ellipse cx="525" cy="87" rx="13" ry="7" fill="#a04535"/>
+              <ellipse cx="521" cy="84" rx="6" ry="3" fill="rgba(255,180,150,0.3)"/>
+              <!-- screw dots -->
+              <circle cx="170" cy="103" r="2" fill="#2a1408"/>
+              <circle cx="350" cy="103" r="2" fill="#9a7030"/>
+              <circle cx="525" cy="103" r="2" fill="#6a2018"/>
+              <!-- surface shadow -->
+              <rect x="80" y="153" width="540" height="5" rx="2" fill="rgba(60,40,20,0.15)"/>
+            </svg>
+            <div class="project-img-footer">
+              <div class="project-img-caption">Drawer knobs in walnut, maple, cherry — spindle or faceplate</div>
+              <a class="project-video-link" href="https://www.youtube.com/results?search_query=wood+lathe+turning+drawer+knobs" target="_blank" rel="noopener">Watch on YouTube</a>
+            </div>
+          </div>
+        </div>
+        <div class="project-toggle">+</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="section-intermediate">
+    <div class="section-label">Intermediate — Higher Impact</div>
+    <div class="project-grid">
+      <div class="project" onclick="toggleCard(this, event)">
+        <div class="project-num">04</div>
+        <div class="project-body">
+          <div class="project-name">Lidded Storage Boxes</div>
+          <div class="project-who">For: jewelry, keepsakes, tea, spices</div>
+          <div class="project-detail">
+            Getting that soft pop of a well-fit lid is genuinely hard-won. These make incredible gifts because they hold something the recipient already cares about.
+            <div class="chips">
+              <span class="chip" data-key="intermediate">Intermediate</span>
+              <span class="chip" data-key="faceplate">Faceplate / chuck</span>
+              <span class="chip" data-key="endgrain">End grain preferred</span>
+            </div>
+          </div>
+          <div class="info-panel"><div class="info-inner"><div class="info-label"></div><div class="info-text"></div></div></div>
+          <div class="project-img-wrap">
+            <svg class="project-img" viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
+              <rect width="700" height="200" fill="#ddd5c2"/>
+              <!-- box body -->
+              <ellipse cx="350" cy="148" rx="110" ry="18" fill="#b89a60"/>
+              <rect x="240" y="95" width="220" height="55" rx="4" fill="#c8a870"/>
+              <!-- wood grain on body -->
+              <line x1="240" y1="110" x2="460" y2="110" stroke="#b09050" stroke-width="1" opacity="0.5"/>
+              <line x1="240" y1="122" x2="460" y2="122" stroke="#b09050" stroke-width="1" opacity="0.4"/>
+              <line x1="240" y1="134" x2="460" y2="134" stroke="#b09050" stroke-width="1" opacity="0.3"/>
+              <ellipse cx="350" cy="95" rx="110" ry="16" fill="#d4b47a"/>
+              <!-- lid -->
+              <ellipse cx="350" cy="79" rx="110" ry="16" fill="#c0984c"/>
+              <rect x="240" y="63" width="220" height="18" rx="4" fill="#c8a455"/>
+              <ellipse cx="350" cy="63" rx="110" ry="14" fill="#d4ae5e"/>
+              <!-- lid rim highlight -->
+              <ellipse cx="350" cy="63" rx="108" ry="12" fill="none" stroke="#e0be70" stroke-width="2" opacity="0.5"/>
+              <!-- finial knob on lid -->
+              <ellipse cx="350" cy="52" rx="18" ry="10" fill="#a07838"/>
+              <ellipse cx="350" cy="44" rx="10" ry="7" fill="#b08845"/>
+              <ellipse cx="347" cy="41" rx="5" ry="3" fill="rgba(255,230,160,0.4)"/>
+              <!-- fit line between lid and body -->
+              <ellipse cx="350" cy="79" rx="110" ry="16" fill="none" stroke="#8a6830" stroke-width="1.5" opacity="0.6"/>
+              <!-- shadow -->
+              <ellipse cx="350" cy="163" rx="115" ry="8" fill="rgba(60,40,10,0.18)"/>
+            </svg>
+            <div class="project-img-footer">
+              <div class="project-img-caption">End-grain construction — lid fit stays consistent year-round</div>
+              <a class="project-video-link" href="https://www.youtube.com/results?search_query=woodturning+lidded+box+end+grain" target="_blank" rel="noopener">Watch on YouTube</a>
+            </div>
+          </div>
+        </div>
+        <div class="project-toggle">+</div>
+      </div>
+      <div class="project" onclick="toggleCard(this, event)">
+        <div class="project-num">05</div>
+        <div class="project-body">
+          <div class="project-name">Pill / Medicine Organizer</div>
+          <div class="project-who">For: elderly family members, caregivers</div>
+          <div class="project-detail">
+            A beautiful segmented wooden pill organizer with labeled, lidded compartments. Use contrasting woods for each compartment. This one earns real gratitude.
+            <div class="chips">
+              <span class="chip" data-key="intermediate">Intermediate</span>
+              <span class="chip" data-key="segmented">Segmented or hollow</span>
+              <span class="chip" data-key="contrast">Contrasting woods</span>
+            </div>
+          </div>
+          <div class="info-panel"><div class="info-inner"><div class="info-label"></div><div class="info-text"></div></div></div>
+          <div class="project-img-wrap">
+            <svg class="project-img" viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
+              <rect width="700" height="200" fill="#e0d8c8"/>
+              <!-- 7 small lidded compartments, different wood colors -->
+              <defs>
+                <g id="compartment"></g>
+              </defs>
+              <!-- compartment colors: Mon-Sun -->
+              <!-- each box: body rect + lid ellipse + label -->
+              <!-- MON - maple -->
+              <rect x="38" y="95" width="72" height="55" rx="3" fill="#d4b87a"/>
+              <ellipse cx="74" cy="95" rx="36" ry="10" fill="#e0c888"/>
+              <ellipse cx="74" cy="84" rx="36" ry="10" fill="#dcc480"/>
+              <ellipse cx="72" cy="81" rx="16" ry="5" fill="rgba(255,240,190,0.4)"/>
+              <text x="74" y="167" text-anchor="middle" font-family="monospace" font-size="9" fill="#7a6040" letter-spacing="1">MON</text>
+              <!-- TUE - walnut -->
+              <rect x="136" y="95" width="72" height="55" rx="3" fill="#6b4226"/>
+              <ellipse cx="172" cy="95" rx="36" ry="10" fill="#7a4c30"/>
+              <ellipse cx="172" cy="84" rx="36" ry="10" fill="#7a4c30"/>
+              <ellipse cx="170" cy="81" rx="16" ry="5" fill="rgba(200,150,100,0.3)"/>
+              <text x="172" y="167" text-anchor="middle" font-family="monospace" font-size="9" fill="#7a6040" letter-spacing="1">TUE</text>
+              <!-- WED - cherry -->
+              <rect x="234" y="95" width="72" height="55" rx="3" fill="#8b3a2a"/>
+              <ellipse cx="270" cy="95" rx="36" ry="10" fill="#9a4434"/>
+              <ellipse cx="270" cy="84" rx="36" ry="10" fill="#9a4434"/>
+              <ellipse cx="268" cy="81" rx="16" ry="5" fill="rgba(230,170,150,0.3)"/>
+              <text x="270" y="167" text-anchor="middle" font-family="monospace" font-size="9" fill="#7a6040" letter-spacing="1">WED</text>
+              <!-- THU - padauk -->
+              <rect x="332" y="95" width="72" height="55" rx="3" fill="#c4632a"/>
+              <ellipse cx="368" cy="95" rx="36" ry="10" fill="#d06e34"/>
+              <ellipse cx="368" cy="84" rx="36" ry="10" fill="#d06e34"/>
+              <ellipse cx="366" cy="81" rx="16" ry="5" fill="rgba(255,200,150,0.3)"/>
+              <text x="368" y="167" text-anchor="middle" font-family="monospace" font-size="9" fill="#7a6040" letter-spacing="1">THU</text>
+              <!-- FRI - oak -->
+              <rect x="430" y="95" width="72" height="55" rx="3" fill="#c8a060"/>
+              <ellipse cx="466" cy="95" rx="36" ry="10" fill="#d4aa6a"/>
+              <ellipse cx="466" cy="84" rx="36" ry="10" fill="#d4aa6a"/>
+              <ellipse cx="464" cy="81" rx="16" ry="5" fill="rgba(255,235,180,0.4)"/>
+              <text x="466" y="167" text-anchor="middle" font-family="monospace" font-size="9" fill="#7a6040" letter-spacing="1">FRI</text>
+              <!-- SAT - purpleheart -->
+              <rect x="528" y="95" width="72" height="55" rx="3" fill="#6a4a7a"/>
+              <ellipse cx="564" cy="95" rx="36" ry="10" fill="#785488"/>
+              <ellipse cx="564" cy="84" rx="36" ry="10" fill="#785488"/>
+              <ellipse cx="562" cy="81" rx="16" ry="5" fill="rgba(200,170,230,0.3)"/>
+              <text x="564" y="167" text-anchor="middle" font-family="monospace" font-size="9" fill="#7a6040" letter-spacing="1">SAT</text>
+              <!-- SUN - ebony -->
+              <rect x="626" y="95" width="52" height="55" rx="3" fill="#2a2018"/>
+              <ellipse cx="652" cy="95" rx="26" ry="8" fill="#342820"/>
+              <ellipse cx="652" cy="87" rx="26" ry="8" fill="#342820"/>
+              <ellipse cx="650" cy="84" rx="11" ry="4" fill="rgba(180,160,120,0.3)"/>
+              <text x="652" y="167" text-anchor="middle" font-family="monospace" font-size="9" fill="#7a6040" letter-spacing="1">SUN</text>
+              <!-- connecting tray base -->
+              <rect x="30" y="148" width="648" height="8" rx="3" fill="#b09060" opacity="0.6"/>
+            </svg>
+            <div class="project-img-footer">
+              <div class="project-img-caption">Seven compartments, seven species — one per day</div>
+              <a class="project-video-link" href="https://www.youtube.com/results?search_query=woodturning+segmented+small+boxes+contrasting+wood" target="_blank" rel="noopener">Watch on YouTube</a>
+            </div>
+          </div>
+        </div>
+        <div class="project-toggle">+</div>
+      </div>
+      <div class="project" onclick="toggleCard(this, event)">
+        <div class="project-num">06</div>
+        <div class="project-body">
+          <div class="project-name">Walking Cane or Staff</div>
+          <div class="project-who">For: someone who needs support - literally</div>
+          <div class="project-detail">
+            Long spindle work, a thoughtfully shaped handle grip, and a rubber tip. The person who uses it every day will think of you every day.
+            <div class="chips">
+              <span class="chip" data-key="long-spindle">Long spindle</span>
+              <span class="chip" data-key="steady-rest">Steady rest</span>
+              <span class="chip" data-key="ash-hickory">Ash / Hickory</span>
+            </div>
+          </div>
+          <div class="info-panel"><div class="info-inner"><div class="info-label"></div><div class="info-text"></div></div></div>
+          <div class="project-img-wrap">
+            <svg class="project-img" viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
+              <rect width="700" height="200" fill="#dcd4c2"/>
+              <!-- floor line -->
+              <line x1="50" y1="178" x2="650" y2="178" stroke="#c0b090" stroke-width="1.5" opacity="0.5"/>
+              <!-- cane shaft -->
+              <rect x="333" y="30" width="22" height="148" rx="11" fill="#b89060"/>
+              <!-- wood grain on shaft -->
+              <line x1="340" y1="35" x2="340" y2="172" stroke="#9a7040" stroke-width="1" opacity="0.4"/>
+              <line x1="350" y1="35" x2="350" y2="172" stroke="#c8a870" stroke-width="0.5" opacity="0.3"/>
+              <!-- curved crook handle -->
+              <path d="M344 30 Q344 10 310 8 Q276 6 268 28 Q265 38 272 44" fill="none" stroke="#b89060" stroke-width="22" stroke-linecap="round"/>
+              <path d="M344 30 Q344 10 310 8 Q276 6 268 28 Q265 38 272 44" fill="none" stroke="#9a7040" stroke-width="1" opacity="0.4"/>
+              <!-- handle highlight -->
+              <path d="M340 30 Q340 12 308 10 Q280 8 272 28" fill="none" stroke="rgba(255,235,190,0.4)" stroke-width="6" stroke-linecap="round"/>
+              <!-- rubber tip -->
+              <ellipse cx="344" cy="178" rx="14" ry="6" fill="#3a3530"/>
+              <rect x="332" y="172" width="24" height="8" rx="5" fill="#2a2520"/>
+              <!-- shadow -->
+              <ellipse cx="370" cy="180" rx="40" ry="5" fill="rgba(60,40,20,0.18)"/>
+              <!-- grain detail on handle -->
+              <path d="M310 12 Q280 12 272 32" fill="none" stroke="#9a7040" stroke-width="0.8" opacity="0.3"/>
+            </svg>
+            <div class="project-img-footer">
+              <div class="project-img-caption">Ash or hickory — dense, shock-resistant, oil-finished</div>
+              <a class="project-video-link" href="https://www.youtube.com/results?search_query=wood+lathe+turning+walking+cane+staff" target="_blank" rel="noopener">Watch on YouTube</a>
+            </div>
+          </div>
+        </div>
+        <div class="project-toggle">+</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="section-advanced">
+    <div class="section-label">Advanced — Significant & Personal</div>
+    <div class="project-grid">
+      <div class="project" onclick="toggleCard(this, event)">
+        <div class="project-num">07</div>
+        <div class="project-body">
+          <div class="project-name">Urn or Memory Vessel</div>
+          <div class="project-who">For: families who have lost someone</div>
+          <div class="project-detail">
+            The most emotionally significant thing a turner can make. Hollow form with a fitted lid, sealed and beautiful. Making one from a meaningful wood is an act of profound care.
+            <div class="chips">
+              <span class="chip" data-key="advanced">Advanced</span>
+              <span class="chip" data-key="hollow">Hollow form</span>
+              <span class="chip" data-key="meaningful-wood">Choosing the wood</span>
+            </div>
+          </div>
+          <div class="info-panel"><div class="info-inner"><div class="info-label"></div><div class="info-text"></div></div></div>
+          <div class="project-img-wrap">
+            <svg class="project-img" viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
+              <rect width="700" height="200" fill="#d8d0c0"/>
+              <!-- urn body — graceful vase profile -->
+              <path d="M280 165 Q250 165 238 140 Q220 105 228 75 Q235 50 280 45 L420 45 Q465 50 472 75 Q480 105 462 140 Q450 165 420 165 Z" fill="#a07838"/>
+              <!-- wood grain lines on body -->
+              <path d="M250 80 Q350 72 450 80" fill="none" stroke="#8a6428" stroke-width="1" opacity="0.4"/>
+              <path d="M240 100 Q350 90 460 100" fill="none" stroke="#8a6428" stroke-width="1" opacity="0.4"/>
+              <path d="M238 120 Q350 110 462 120" fill="none" stroke="#8a6428" stroke-width="1" opacity="0.35"/>
+              <path d="M242 140 Q350 132 458 140" fill="none" stroke="#8a6428" stroke-width="1" opacity="0.3"/>
+              <!-- body highlight -->
+              <path d="M290 50 Q270 80 268 130" fill="none" stroke="rgba(255,230,160,0.3)" stroke-width="18" stroke-linecap="round"/>
+              <!-- shoulder ring detail -->
+              <path d="M240 72 Q350 64 460 72" fill="none" stroke="#6a4818" stroke-width="3" opacity="0.5"/>
+              <!-- neck -->
+              <rect x="316" y="30" width="68" height="18" rx="6" fill="#b08840"/>
+              <ellipse cx="350" cy="30" rx="34" ry="8" fill="#c09448"/>
+              <!-- lid -->
+              <ellipse cx="350" cy="22" rx="34" ry="8" fill="#8a6028"/>
+              <rect x="316" y="14" width="68" height="10" rx="5" fill="#8a6028"/>
+              <ellipse cx="350" cy="14" rx="34" ry="8" fill="#9a7032"/>
+              <!-- finial -->
+              <ellipse cx="350" cy="8" rx="12" ry="6" fill="#7a5020"/>
+              <ellipse cx="350" cy="4" rx="6" ry="4" fill="#8a5c28"/>
+              <ellipse cx="348" cy="2" rx="3" ry="2" fill="rgba(255,220,140,0.35)"/>
+              <!-- base foot ring -->
+              <ellipse cx="350" cy="165" rx="75" ry="12" fill="#8a6028"/>
+              <ellipse cx="350" cy="163" rx="70" ry="9" fill="#9a7030" opacity="0.7"/>
+              <!-- shadow -->
+              <ellipse cx="350" cy="176" rx="90" ry="8" fill="rgba(40,25,8,0.22)"/>
+            </svg>
+            <div class="project-img-footer">
+              <div class="project-img-caption">Hollow form with fitted lid — select wood with care</div>
+              <a class="project-video-link" href="https://www.youtube.com/results?search_query=woodturning+hollow+form+urn+memorial+vessel" target="_blank" rel="noopener">Watch on YouTube</a>
+            </div>
+          </div>
+        </div>
+        <div class="project-toggle">+</div>
+      </div>
+      <div class="project" onclick="toggleCard(this, event)">
+        <div class="project-num">08</div>
+        <div class="project-body">
+          <div class="project-name">Adaptive Tools and Handles</div>
+          <div class="project-who">For: people with limited grip or dexterity</div>
+          <div class="project-detail">
+            Custom-turned handles sized and shaped for a specific person's hand. Genuine assistive design - work directly with the person or an OT to find the right shape.
+            <div class="chips">
+              <span class="chip" data-key="hcd">Human-centered design</span>
+              <span class="chip" data-key="custom-fit">Custom fit</span>
+              <span class="chip" data-key="ot">OT collaboration</span>
+            </div>
+          </div>
+          <div class="info-panel"><div class="info-inner"><div class="info-label"></div><div class="info-text"></div></div></div>
+          <div class="project-img-wrap">
+            <svg class="project-img" viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
+              <rect width="700" height="200" fill="#dcd5c5"/>
+              <!-- three handle profiles showing different ergonomic shapes -->
+              <!-- handle 1: thick cylindrical with finger grooves -->
+              <rect x="100" y="60" width="48" height="110" rx="24" fill="#c8a060"/>
+              <!-- finger grooves -->
+              <ellipse cx="124" cy="88" rx="25" ry="5" fill="#b08840" opacity="0.5"/>
+              <ellipse cx="124" cy="102" rx="25" ry="5" fill="#b08840" opacity="0.5"/>
+              <ellipse cx="124" cy="116" rx="25" ry="5" fill="#b08840" opacity="0.5"/>
+              <ellipse cx="124" cy="130" rx="25" ry="5" fill="#b08840" opacity="0.5"/>
+              <line x1="118" y1="65" x2="118" y2="165" stroke="#9a7838" stroke-width="1" opacity="0.35"/>
+              <ellipse cx="120" cy="66" rx="8" ry="4" fill="rgba(255,235,180,0.4)"/>
+              <!-- handle 2: tapered teardrop — easier grip -->
+              <path d="M296 55 Q336 55 346 90 Q356 130 340 165 Q328 172 312 165 Q296 158 290 130 Q280 95 296 55 Z" fill="#a07030"/>
+              <line x1="308" y1="60" x2="308" y2="165" stroke="#886020" stroke-width="1" opacity="0.35"/>
+              <ellipse cx="306" cy="62" rx="8" ry="4" fill="rgba(240,210,150,0.35)"/>
+              <!-- handle 3: wide palm swell with flats -->
+              <rect x="490" y="55" width="60" height="115" rx="18" fill="#7a4828"/>
+              <rect x="498" y="68" width="44" height="8" rx="4" fill="#6a3818" opacity="0.5"/>
+              <rect x="498" y="84" width="44" height="8" rx="4" fill="#6a3818" opacity="0.4"/>
+              <rect x="498" y="100" width="44" height="8" rx="4" fill="#6a3818" opacity="0.35"/>
+              <line x1="515" y1="60" x2="515" y2="165" stroke="#6a3818" stroke-width="1" opacity="0.3"/>
+              <ellipse cx="513" cy="62" rx="8" ry="4" fill="rgba(220,170,130,0.35)"/>
+              <!-- diameter callout lines for handle 1 -->
+              <line x1="100" y1="185" x2="148" y2="185" stroke="#8a7060" stroke-width="1"/>
+              <line x1="100" y1="180" x2="100" y2="190" stroke="#8a7060" stroke-width="1"/>
+              <line x1="148" y1="180" x2="148" y2="190" stroke="#8a7060" stroke-width="1"/>
+              <text x="124" y="198" text-anchor="middle" font-family="monospace" font-size="9" fill="#6a5040">1.75"</text>
+              <!-- shadows -->
+              <ellipse cx="124" cy="174" rx="28" ry="6" fill="rgba(60,35,15,0.18)"/>
+              <ellipse cx="316" cy="174" rx="32" ry="6" fill="rgba(60,35,15,0.15)"/>
+              <ellipse cx="520" cy="174" rx="34" ry="6" fill="rgba(60,35,15,0.18)"/>
+            </svg>
+            <div class="project-img-footer">
+              <div class="project-img-caption">Three profiles — 1.5–2" diameter reduces grip effort measurably</div>
+              <a class="project-video-link" href="https://www.youtube.com/results?search_query=woodturning+ergonomic+tool+handle+lathe" target="_blank" rel="noopener">Watch on YouTube</a>
+            </div>
+          </div>
+        </div>
+        <div class="project-toggle">+</div>
+      </div>
+      <div class="project" onclick="toggleCard(this, event)">
+        <div class="project-num">09</div>
+        <div class="project-body">
+          <div class="project-name">Segmented Turning</div>
+          <div class="project-who">For: collectors, design enthusiasts, special occasions</div>
+          <div class="project-detail">
+            Segmented turning builds a bowl or vessel from dozens — sometimes hundreds — of individually cut wood pieces glued together before turning. The result is a precisely engineered pattern of contrasting woods, grain directions, and colors that a solid blank could never produce. It demands accuracy at every stage: segment angles must sum perfectly, glue-ups must be flat and square, and the turner must think through the final form long before the lathe starts. A deeply rewarding discipline that sits at the intersection of woodworking, design, and mathematics.
+            <div class="chips">
+              <span class="chip" data-key="advanced">Advanced</span>
+              <span class="chip" data-key="segmented">Segmented construction</span>
+              <span class="chip" data-key="multi-wood">Multiple species</span>
+              <a href="https://www.worldwidewoodturners.org/designing-segmented-turning-projects/" target="_blank" rel="noopener" style="text-decoration:none;"><span class="chip" data-key="design-planning">Design &amp; planning</span></a>
+            </div>
+          </div>
+          <div class="info-panel"><div class="info-inner"><div class="info-label"></div><div class="info-text"></div></div></div>
+          <div class="project-img-wrap">
+            <svg class="project-img" viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
+              <rect width="700" height="200" fill="#ddd5c2"/>
+              <!-- bowl silhouette -->
+              <path d="M200 155 Q200 80 350 65 Q500 80 500 155 Z" fill="none" stroke="#c8b090" stroke-width="1" opacity="0.3"/>
+              <!-- segmented rings - bottom ring (widest, dark walnut) -->
+              <path d="M215 155 Q215 145 350 138 Q485 145 485 155 Q485 162 350 168 Q215 162 215 155 Z" fill="#5a3318"/>
+              <!-- ring 2 (maple) -->
+              <path d="M220 140 Q220 130 350 122 Q480 130 480 140 Q480 148 350 154 Q220 148 220 140 Z" fill="#d4a860"/>
+              <!-- ring 3 (walnut) -->
+              <path d="M228 126 Q228 116 350 107 Q472 116 472 126 Q472 134 350 140 Q228 134 228 126 Z" fill="#5a3318"/>
+              <!-- ring 4 (cherry) -->
+              <path d="M238 112 Q238 102 350 93 Q462 102 462 112 Q462 120 350 126 Q238 120 238 112 Z" fill="#8b3a2a"/>
+              <!-- ring 5 (maple) -->
+              <path d="M250 99 Q250 89 350 80 Q450 89 450 99 Q450 107 350 113 Q250 107 250 99 Z" fill="#d4a860"/>
+              <!-- ring 6 (walnut, top narrow) -->
+              <path d="M268 87 Q268 78 350 70 Q432 78 432 87 Q432 94 350 100 Q268 94 268 87 Z" fill="#5a3318"/>
+              <!-- segment lines on ring 2 (maple) to show individual pieces -->
+              <line x1="220" y1="140" x2="350" y2="122" stroke="#c89848" stroke-width="0.7" opacity="0.5"/>
+              <line x1="261" y1="129" x2="350" y2="122" stroke="#c89848" stroke-width="0.7" opacity="0.5"/>
+              <line x1="305" y1="123" x2="350" y2="122" stroke="#c89848" stroke-width="0.7" opacity="0.4"/>
+              <line x1="395" y1="123" x2="350" y2="122" stroke="#c89848" stroke-width="0.7" opacity="0.4"/>
+              <line x1="439" y1="129" x2="350" y2="122" stroke="#c89848" stroke-width="0.7" opacity="0.5"/>
+              <line x1="480" y1="140" x2="350" y2="122" stroke="#c89848" stroke-width="0.7" opacity="0.5"/>
+              <!-- highlight -->
+              <path d="M268 90 Q290 76 320 72" fill="none" stroke="rgba(255,235,180,0.35)" stroke-width="10" stroke-linecap="round"/>
+              <!-- base foot ring -->
+              <ellipse cx="350" cy="165" rx="140" ry="10" fill="#4a2a10"/>
+              <!-- shadow -->
+              <ellipse cx="350" cy="174" rx="150" ry="8" fill="rgba(40,25,8,0.2)"/>
+            </svg>
+            <div class="project-img-footer">
+              <div class="project-img-caption">Walnut, maple &amp; cherry segments — precision-glued before turning</div>
+              <a class="project-video-link" href="https://www.youtube.com/results?search_query=segmented+woodturning+lathe+bowl" target="_blank" rel="noopener">Watch on YouTube</a>
+            </div>
+          </div>
+        </div>
+        <div class="project-toggle">+</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Seasonal & Gifts Section ── -->
+  <div class="section section-seasonal">
+    <div class="section-label">Seasonal & Gifts</div>
+    <div class="project-grid">
+
+      <!-- Project 10: Christmas Ornaments -->
+      <div class="project" onclick="toggleCard(this, event)">
+        <div class="project-num">10</div>
+        <div class="project-body">
+          <div class="project-name">Christmas Ornaments</div>
+          <div class="project-who">For: anyone on your list — uses up offcuts</div>
+          <div class="project-detail">
+            Turn a batch from small offcuts of contrasting species. Spheres, teardrops, icicles — each takes under 20 minutes once you have the technique. A set of twelve is a show-stopping gift.
+            <div class="chips">
+              <span class="chip" data-key="beginner">Beginner</span>
+              <span class="chip" data-key="ornament">Turned ornaments</span>
+              <span class="chip" data-key="finial-detail">Finial & detail work</span>
+              <span class="chip" data-key="small-offcuts">Using small offcuts</span>
+            </div>
+          </div>
+          <div class="info-panel"><div class="info-inner"><div class="info-label"></div><div class="info-text"></div></div></div>
+          <div class="project-img-wrap">
+            <svg class="project-img" viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
+              <rect width="700" height="200" fill="#e8efe8"/>
+              <!-- soft background glow -->
+              <ellipse cx="350" cy="120" rx="300" ry="70" fill="#ddeedd" opacity="0.5"/>
+              <!-- ornament 1: walnut sphere left -->
+              <circle cx="160" cy="115" r="52" fill="#5a3318"/>
+              <circle cx="148" cy="100" r="18" fill="rgba(200,150,90,0.25)"/>
+              <!-- grain lines -->
+              <path d="M118 95 Q160 80 202 95" fill="none" stroke="#7a4a28" stroke-width="1.2" opacity="0.5"/>
+              <path d="M112 108 Q160 92 208 108" fill="none" stroke="#7a4a28" stroke-width="1" opacity="0.4"/>
+              <path d="M115 122 Q160 108 205 122" fill="none" stroke="#7a4a28" stroke-width="1" opacity="0.3"/>
+              <!-- cap -->
+              <rect x="153" y="60" width="14" height="14" rx="3" fill="#8a6030"/>
+              <ellipse cx="160" cy="60" rx="7" ry="4" fill="#9a7040"/>
+              <!-- hook -->
+              <path d="M160 56 Q160 44 172 38" fill="none" stroke="#8a7060" stroke-width="2" stroke-linecap="round"/>
+              <!-- hanging string -->
+              <line x1="172" y1="38" x2="172" y2="22" stroke="#a09070" stroke-width="1" opacity="0.6"/>
+
+              <!-- ornament 2: maple teardrop center -->
+              <ellipse cx="350" cy="122" rx="42" ry="54" fill="#d4a860"/>
+              <ellipse cx="338" cy="104" rx="14" ry="18" fill="rgba(255,235,170,0.3)"/>
+              <!-- carved cove rings -->
+              <ellipse cx="350" cy="108" rx="40" ry="10" fill="none" stroke="#b08840" stroke-width="2" opacity="0.5"/>
+              <ellipse cx="350" cy="122" rx="42" ry="10" fill="none" stroke="#b08840" stroke-width="1.5" opacity="0.4"/>
+              <ellipse cx="350" cy="136" rx="38" ry="8" fill="none" stroke="#b08840" stroke-width="1" opacity="0.3"/>
+              <!-- finial bottom -->
+              <ellipse cx="350" cy="174" rx="8" ry="5" fill="#c09050"/>
+              <ellipse cx="350" cy="179" rx="4" ry="3" fill="#a07838"/>
+              <!-- cap and hook -->
+              <rect x="344" y="64" width="12" height="12" rx="2" fill="#8a6030"/>
+              <ellipse cx="350" cy="64" rx="6" ry="3.5" fill="#9a7040"/>
+              <path d="M350 60 Q350 48 362 42" fill="none" stroke="#8a7060" stroke-width="2" stroke-linecap="round"/>
+              <line x1="362" y1="42" x2="362" y2="22" stroke="#a09070" stroke-width="1" opacity="0.6"/>
+
+              <!-- ornament 3: cherry icicle right -->
+              <path d="M526 72 Q546 72 552 100 Q558 132 540 162 Q534 172 530 162 Q516 132 520 100 Q524 72 526 72 Z" fill="#8b3a2a"/>
+              <path d="M528 78 Q542 80 546 105" fill="none" stroke="rgba(255,180,150,0.3)" stroke-width="10" stroke-linecap="round"/>
+              <!-- carved rings on icicle -->
+              <path d="M520 105 Q536 98 552 105" fill="none" stroke="#6a2818" stroke-width="1.5" opacity="0.5"/>
+              <path d="M518 120 Q536 114 554 120" fill="none" stroke="#6a2818" stroke-width="1.2" opacity="0.4"/>
+              <path d="M520 135 Q536 130 552 135" fill="none" stroke="#6a2818" stroke-width="1" opacity="0.3"/>
+              <!-- point -->
+              <ellipse cx="535" cy="163" rx="5" ry="3" fill="#6a2818"/>
+              <!-- cap and hook -->
+              <rect x="529" y="66" width="12" height="12" rx="2" fill="#8a6030"/>
+              <ellipse cx="535" cy="66" rx="6" ry="3.5" fill="#9a7040"/>
+              <path d="M535 62 Q535 50 547 44" fill="none" stroke="#8a7060" stroke-width="2" stroke-linecap="round"/>
+              <line x1="547" y1="44" x2="547" y2="22" stroke="#a09070" stroke-width="1" opacity="0.6"/>
+
+              <!-- shadow -->
+              <ellipse cx="350" cy="188" rx="200" ry="7" fill="rgba(40,60,40,0.1)"/>
+            </svg>
+            <div class="project-img-footer">
+              <div class="project-img-caption">Walnut sphere, maple teardrop, cherry icicle — turned from offcuts</div>
+              <a class="project-video-link" href="https://www.youtube.com/results?search_query=woodturning+christmas+ornaments+lathe" target="_blank" rel="noopener">Watch on YouTube</a>
+            </div>
+          </div>
+        </div>
+        <div class="project-toggle">+</div>
+      </div>
+
+      <!-- Project 10: Honey Dippers & Bottle Stoppers -->
+      <div class="project" onclick="toggleCard(this, event)">
+        <div class="project-num">11</div>
+        <div class="project-body">
+          <div class="project-name">Honey Dippers & Bottle Stoppers</div>
+          <div class="project-who">For: host gifts, thank-yous, stocking stuffers</div>
+          <div class="project-detail">
+            Quick to turn, immediately useful, and always appreciated. Honey dippers are pure spindle work. Bottle stoppers use an inexpensive mandrel kit and take under 30 minutes start to finish.
+            <div class="chips">
+              <span class="chip" data-key="beginner">Beginner</span>
+              <span class="chip" data-key="honey-dipper">Honey dipper tips</span>
+              <span class="chip" data-key="bottle-stopper">Bottle stopper hardware</span>
+              <span class="chip" data-key="wine-gift">Pairing with wine</span>
+            </div>
+          </div>
+          <div class="info-panel"><div class="info-inner"><div class="info-label"></div><div class="info-text"></div></div></div>
+          <div class="project-img-wrap">
+            <svg class="project-img" viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
+              <rect width="700" height="200" fill="#f0e8d4"/>
+              <!-- honey pool -->
+              <ellipse cx="210" cy="175" rx="100" ry="14" fill="#d4a030" opacity="0.35"/>
+              <!-- honey dipper handle -->
+              <rect x="196" y="28" width="10" height="100" rx="5" fill="#c8a060"/>
+              <!-- dipper grooves/head -->
+              <ellipse cx="201" cy="140" rx="22" ry="14" fill="#d4a860"/>
+              <ellipse cx="201" cy="132" rx="22" ry="7" fill="#c89848" opacity="0.8"/>
+              <ellipse cx="201" cy="125" rx="20" ry="6" fill="#c89848" opacity="0.6"/>
+              <ellipse cx="201" cy="118" rx="18" ry="5" fill="#c89848" opacity="0.4"/>
+              <!-- handle top -->
+              <ellipse cx="201" cy="28" rx="7" ry="5" fill="#b89050"/>
+              <ellipse cx="199" cy="25" rx="4" ry="3" fill="rgba(255,235,170,0.5)"/>
+              <!-- grain line on handle -->
+              <line x1="199" y1="35" x2="199" y2="125" stroke="#a87838" stroke-width="1" opacity="0.35"/>
+              <!-- honey drip -->
+              <path d="M212 154 Q220 165 218 175" fill="none" stroke="#c8900a" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+
+              <!-- bottle stopper 1: walnut top -->
+              <rect x="388" y="45" width="52" height="48" rx="10" fill="#5a3318"/>
+              <ellipse cx="414" cy="45" rx="26" ry="10" fill="#6a3d20"/>
+              <ellipse cx="410" cy="40" rx="14" ry="6" fill="rgba(200,150,90,0.3)"/>
+              <!-- grain -->
+              <line x1="406" y1="52" x2="406" y2="90" stroke="#7a4a28" stroke-width="1" opacity="0.3"/>
+              <!-- stopper neck -->
+              <rect x="408" y="91" width="12" height="16" rx="4" fill="#8a7060"/>
+              <!-- cork -->
+              <rect x="404" y="105" width="20" height="22" rx="4" fill="#c8b090"/>
+              <rect x="406" y="107" width="16" height="4" rx="2" fill="#d4bc9c" opacity="0.7"/>
+
+              <!-- bottle stopper 2: maple sphere -->
+              <circle cx="530" cy="70" r="36" fill="#d4a860"/>
+              <circle cx="520" cy="58" r="12" fill="rgba(255,235,170,0.35)"/>
+              <path d="M502 62 Q530 52 558 62" fill="none" stroke="#b08840" stroke-width="1" opacity="0.4"/>
+              <path d="M498 72 Q530 60 562 72" fill="none" stroke="#b08840" stroke-width="1" opacity="0.35"/>
+              <!-- neck + cork -->
+              <rect x="524" y="104" width="12" height="14" rx="4" fill="#8a7060"/>
+              <rect x="520" y="116" width="20" height="22" rx="4" fill="#c8b090"/>
+              <rect x="522" y="118" width="16" height="4" rx="2" fill="#d4bc9c" opacity="0.7"/>
+
+              <!-- shadows -->
+              <ellipse cx="414" cy="131" rx="28" ry="5" fill="rgba(60,35,10,0.15)"/>
+              <ellipse cx="530" cy="141" rx="28" ry="5" fill="rgba(60,35,10,0.13)"/>
+            </svg>
+            <div class="project-img-footer">
+              <div class="project-img-caption">Honey dipper in maple — bottle stoppers in walnut and cherry, mandrel-fitted</div>
+              <a class="project-video-link" href="https://www.youtube.com/results?search_query=woodturning+honey+dipper+bottle+stopper+lathe" target="_blank" rel="noopener">Watch on YouTube</a>
+            </div>
+          </div>
+        </div>
+        <div class="project-toggle">+</div>
+      </div>
+
+      <!-- Project 11: Memory & Keepsake Pieces -->
+      <div class="project" onclick="toggleCard(this, event)">
+        <div class="project-num">12</div>
+        <div class="project-body">
+          <div class="project-name">Memory & Keepsake Pieces</div>
+          <div class="project-who">For: births, marriages, graduations, milestones</div>
+          <div class="project-detail">
+            A small turned object from a meaningful wood — a tree from the family garden, a timber from a demolished home. The story attached to it is what makes it irreplaceable. Include a handwritten card.
+            <div class="chips">
+              <span class="chip" data-key="intermediate">Intermediate</span>
+              <span class="chip" data-key="meaningful-wood">Choosing the wood</span>
+              <span class="chip" data-key="memory-piece">Memory piece making</span>
+            </div>
+          </div>
+          <div class="info-panel"><div class="info-inner"><div class="info-label"></div><div class="info-text"></div></div></div>
+          <div class="project-img-wrap">
+            <svg class="project-img" viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
+              <rect width="700" height="200" fill="#ece5d8"/>
+              <!-- kraft paper card background -->
+              <rect x="340" y="30" width="290" height="145" rx="3" fill="#d8cdb8" transform="rotate(-3, 485, 103)"/>
+              <rect x="345" y="35" width="280" height="135" rx="2" fill="#e0d5c0" transform="rotate(-3, 485, 103)"/>
+              <!-- handwriting lines on card -->
+              <line x1="362" y1="65" x2="598" y2="57" stroke="#c0b098" stroke-width="1" opacity="0.6"/>
+              <line x1="362" y1="78" x2="598" y2="70" stroke="#c0b098" stroke-width="1" opacity="0.5"/>
+              <line x1="362" y1="91" x2="598" y2="83" stroke="#c0b098" stroke-width="1" opacity="0.4"/>
+              <line x1="362" y1="104" x2="598" y2="96" stroke="#c0b098" stroke-width="1" opacity="0.35"/>
+              <line x1="362" y1="117" x2="598" y2="109" stroke="#c0b098" stroke-width="1" opacity="0.3"/>
+              <!-- text lines (simulated handwriting) -->
+              <rect x="365" y="59" width="120" height="4" rx="2" fill="#6a5840" opacity="0.5" transform="rotate(-3, 485, 103)"/>
+              <rect x="365" y="72" width="180" height="4" rx="2" fill="#6a5840" opacity="0.4" transform="rotate(-3, 485, 103)"/>
+              <rect x="365" y="85" width="155" height="4" rx="2" fill="#6a5840" opacity="0.4" transform="rotate(-3, 485, 103)"/>
+              <rect x="365" y="98" width="135" height="4" rx="2" fill="#6a5840" opacity="0.35" transform="rotate(-3, 485, 103)"/>
+
+              <!-- small turned keepsake box -->
+              <ellipse cx="185" cy="148" rx="72" ry="14" fill="#8a6028"/>
+              <rect x="113" y="95" width="144" height="55" rx="4" fill="#a07838"/>
+              <line x1="113" y1="110" x2="257" y2="110" stroke="#886020" stroke-width="1" opacity="0.5"/>
+              <line x1="113" y1="124" x2="257" y2="124" stroke="#886020" stroke-width="1" opacity="0.4"/>
+              <ellipse cx="185" cy="95" rx="72" ry="13" fill="#b08840"/>
+              <!-- lid -->
+              <ellipse cx="185" cy="82" rx="72" ry="13" fill="#9a7030"/>
+              <rect x="113" y="70" width="144" height="14" rx="4" fill="#9a7030"/>
+              <ellipse cx="185" cy="70" rx="72" ry="11" fill="#aa8038"/>
+              <!-- finial on lid -->
+              <ellipse cx="185" cy="60" rx="14" ry="8" fill="#886028"/>
+              <ellipse cx="185" cy="53" rx="7" ry="5" fill="#9a7030"/>
+              <ellipse cx="183" cy="50" rx="4" ry="3" fill="rgba(255,215,130,0.35)"/>
+              <!-- fit line -->
+              <ellipse cx="185" cy="82" rx="72" ry="13" fill="none" stroke="#604010" stroke-width="1.5" opacity="0.5"/>
+              <!-- shadow -->
+              <ellipse cx="185" cy="162" rx="76" ry="7" fill="rgba(50,30,5,0.18)"/>
+            </svg>
+            <div class="project-img-footer">
+              <div class="project-img-caption">Lidded box with written provenance — wood species and origin recorded</div>
+              <a class="project-video-link" href="https://www.youtube.com/results?search_query=woodturning+keepsake+box+memorial+gift" target="_blank" rel="noopener">Watch on YouTube</a>
+            </div>
+          </div>
+        </div>
+        <div class="project-toggle">+</div>
+      </div>
+
+      <!-- Project 12: Gift-Ready Small Box Set -->
+      <div class="project" onclick="toggleCard(this, event)">
+        <div class="project-num">13</div>
+        <div class="project-body">
+          <div class="project-name">Gift-Ready Small Box Set</div>
+          <div class="project-who">For: rings, notes, first teeth, locks of hair</div>
+          <div class="project-detail">
+            Three small lidded boxes in graduated sizes from the same wood, felt-lined and paired with a ribbon. The box is the gift — what goes inside it is secondary. This is the piece that gets passed down.
+            <div class="chips">
+              <span class="chip" data-key="intermediate">Intermediate</span>
+              <span class="chip" data-key="endgrain">End grain preferred</span>
+              <span class="chip" data-key="small-box-gift">Small box as gift vessel</span>
+              <span class="chip" data-key="contrast">Contrasting woods</span>
+            </div>
+          </div>
+          <div class="info-panel"><div class="info-inner"><div class="info-label"></div><div class="info-text"></div></div></div>
+          <div class="project-img-wrap">
+            <svg class="project-img" viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
+              <rect width="700" height="200" fill="#e8e0d0"/>
+              <!-- ribbon/bow at top center -->
+              <path d="M330 32 Q350 22 370 32 Q350 42 330 32 Z" fill="#c4633a" opacity="0.7"/>
+              <path d="M330 32 Q310 20 320 10 Q340 18 330 32 Z" fill="#c4633a" opacity="0.8"/>
+              <path d="M370 32 Q390 20 380 10 Q360 18 370 32 Z" fill="#c4633a" opacity="0.8"/>
+              <line x1="350" y1="32" x2="350" y2="80" stroke="#c4633a" stroke-width="2" opacity="0.5"/>
+
+              <!-- box 1 (small, left, cherry) -->
+              <ellipse cx="185" cy="155" rx="44" ry="9" fill="#6a2818"/>
+              <rect x="141" y="118" width="88" height="38" rx="3" fill="#8b3a2a"/>
+              <ellipse cx="185" cy="118" rx="44" ry="8" fill="#9a4434"/>
+              <ellipse cx="185" cy="108" rx="44" ry="8" fill="#823224"/>
+              <rect x="141" y="100" width="88" height="10" rx="3" fill="#823224"/>
+              <ellipse cx="185" cy="100" rx="44" ry="8" fill="#9a4434"/>
+              <ellipse cx="185" cy="93" rx="10" ry="6" fill="#6a2818"/>
+              <ellipse cx="185" cy="88" rx="5" ry="4" fill="#7a3020"/>
+              <!-- felt lining peek -->
+              <ellipse cx="185" cy="118" rx="36" ry="6" fill="#2a5a3a" opacity="0.7"/>
+
+              <!-- box 2 (medium, center, walnut) -->
+              <ellipse cx="350" cy="158" rx="58" ry="11" fill="#3a2010"/>
+              <rect x="292" y="112" width="116" height="48" rx="4" fill="#5a3318"/>
+              <ellipse cx="350" cy="112" rx="58" ry="11" fill="#6a3d20"/>
+              <ellipse cx="350" cy="99" rx="58" ry="11" fill="#4a2810"/>
+              <rect x="292" y="90" width="116" height="12" rx="4" fill="#4a2810"/>
+              <ellipse cx="350" cy="90" rx="58" ry="11" fill="#6a3d20"/>
+              <ellipse cx="350" cy="80" rx="13" ry="7" fill="#3a2010"/>
+              <ellipse cx="350" cy="74" rx="7" ry="5" fill="#4a2810"/>
+              <ellipse cx="347" cy="71" rx="4" ry="3" fill="rgba(200,150,90,0.3)"/>
+              <!-- felt lining peek -->
+              <ellipse cx="350" cy="112" rx="48" ry="8" fill="#2a5a3a" opacity="0.7"/>
+
+              <!-- box 3 (large, right, maple) -->
+              <ellipse cx="522" cy="161" rx="70" ry="12" fill="#b09050"/>
+              <rect x="452" y="108" width="140" height="55" rx="4" fill="#d4a860"/>
+              <line x1="452" y1="122" x2="592" y2="122" stroke="#b08840" stroke-width="1" opacity="0.4"/>
+              <line x1="452" y1="136" x2="592" y2="136" stroke="#b08840" stroke-width="1" opacity="0.3"/>
+              <ellipse cx="522" cy="108" rx="70" ry="12" fill="#e0b870"/>
+              <ellipse cx="522" cy="94" rx="70" ry="12" fill="#c89848"/>
+              <rect x="452" y="83" width="140" height="13" rx="4" fill="#c89848"/>
+              <ellipse cx="522" cy="83" rx="70" ry="12" fill="#e0b870"/>
+              <ellipse cx="522" cy="70" rx="16" ry="8" fill="#b09050"/>
+              <ellipse cx="522" cy="63" rx="8" ry="5" fill="#c8a060"/>
+              <ellipse cx="519" cy="60" rx="5" ry="3" fill="rgba(255,235,170,0.4)"/>
+              <!-- felt lining peek -->
+              <ellipse cx="522" cy="108" rx="58" ry="9" fill="#2a5a3a" opacity="0.7"/>
+
+              <!-- shadow -->
+              <ellipse cx="350" cy="178" rx="240" ry="8" fill="rgba(50,30,10,0.12)"/>
+            </svg>
+            <div class="project-img-footer">
+              <div class="project-img-caption">Cherry, walnut, maple — graduated sizes, felt-lined interiors</div>
+              <a class="project-video-link" href="https://www.youtube.com/results?search_query=woodturning+small+lidded+box+set+gift" target="_blank" rel="noopener">Watch on YouTube</a>
+            </div>
+          </div>
+        </div>
+        <div class="project-toggle">+</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Timber Properties ── -->
+  <div class="timber-section" id="timber-section">
+    <div class="timber-toggle" onclick="toggleTimber()">
+      <div class="timber-toggle-left">
+        <div>
+          <div class="timber-toggle-label">Wood Selection Guide</div>
+          <div class="timber-toggle-title">Timber Properties</div>
+        </div>
+      </div>
+      <div class="timber-toggle-arrow">+</div>
+    </div>
+    <div class="timber-body">
+      <div class="timber-inner">
+        <div class="timber-intro">
+          Every timber used in these projects has its own personality — how it sources, how it behaves under a tool, and how it responds to a finish. This guide covers the species most relevant to gift turning: sourcing expectations, workability on the lathe, and finishing characteristics.
+        </div>
+        <div class="timber-index-label">Jump to species</div>
+        <div class="timber-index" id="timber-index">
+          <a class="timber-index-link" href="#timber-maple"><span class="ti-swatch" style="background:#d4b07a;"></span>Maple</a>
+          <a class="timber-index-link" href="#timber-cherry"><span class="ti-swatch" style="background:#8b3a2a;"></span>Cherry</a>
+          <a class="timber-index-link" href="#timber-walnut"><span class="ti-swatch" style="background:#5a3318;"></span>Walnut</a>
+          <a class="timber-index-link" href="#timber-oak"><span class="ti-swatch" style="background:#b08d5a;"></span>Oak</a>
+          <a class="timber-index-link" href="#timber-ash"><span class="ti-swatch" style="background:#c8b888;"></span>Ash</a>
+          <a class="timber-index-link" href="#timber-padauk"><span class="ti-swatch" style="background:#a83822;"></span>Padauk</a>
+          <a class="timber-index-link" href="#timber-purpleheart"><span class="ti-swatch" style="background:#5a3070;"></span>Purpleheart</a>
+          <a class="timber-index-link" href="#timber-pine"><span class="ti-swatch" style="background:#d4b060;"></span>Pine</a>
+          <a class="timber-index-link" href="#timber-ebony"><span class="ti-swatch" style="background:#1a1210;"></span>Ebony</a>
+          <a class="timber-index-link" href="#timber-redcedar"><span class="ti-swatch" style="background:#8b3a2e;"></span>Red Cedar</a>
+          <a class="timber-index-link" href="#timber-ironwood"><span class="ti-swatch" style="background:#3a2e22;"></span>Ironwood</a>
+        </div>
+        <div class="timber-grid">
+
+          <!-- MAPLE -->
+          <div class="timber-card" id="timber-maple">
+            <div class="timber-card-header">
+              <div class="timber-swatch" style="background:#d4b07a;"></div>
+              <div class="timber-card-title-row">
+                <div class="timber-name">Maple</div>
+                <div class="timber-latin">Acer saccharum / A. rubrum</div>
+                <div class="timber-badge domestic">Domestic</div>
+              </div>
+            </div>
+            <div class="timber-props">
+              <div class="timber-prop">
+                <div class="timber-prop-label">Sourcing</div>
+                Hard maple (sugar maple) is widely available across North America from hardwood lumber dealers, online retailers, and turning-blank suppliers. Sold as both kiln-dried boards and ready-cut blanks. Expect reliable grain consistency; figured maple (curly, bird's eye) commands a premium and is best sourced from specialist suppliers or turning shows.
+              </div>
+              <div class="timber-prop">
+                <div class="timber-prop-label">Workability</div>
+                A dense, tight-grained hardwood that turns cleanly with sharp tools. It resists tearing but can burn quickly if tools are dull or feed rate slows — keep tools sharp and keep moving. Excellent for fine detail and crisp coves or beads. End grain is particularly smooth when skewed cleanly. Hard maple dulls tools faster than softer species; a quick hone between passes pays off.
+              </div>
+              <div class="timber-prop">
+                <div class="timber-prop-label">Finishing</div>
+                Takes virtually any finish beautifully. Its pale, neutral colour is ideal for oil finishes (tung, Danish), lacquer, and shellac — all of which add a warm honey tone. Sands to a glassy surface; go through the grits to 400 before finishing. Food-safe finishes (mineral oil, beeswax) work well for kitchen items. Maple accepts dye evenly, which is an advantage if colour is desired.
+              </div>
+            </div>
+            <div class="timber-projects-used">Used in: <span>Rolling Pin · Wooden Spoons · Drawer Knobs · Bottle Stoppers · Gift Box Set</span></div>
+            <div class="timber-return"><a class="timber-return-link" href="#timber-index">Back to species list</a></div>
+          </div>
+
+          <!-- CHERRY -->
+          <div class="timber-card" id="timber-cherry">
+            <div class="timber-card-header">
+              <div class="timber-swatch" style="background:#8b3a2a;"></div>
+              <div class="timber-card-title-row">
+                <div class="timber-name">Cherry</div>
+                <div class="timber-latin">Prunus serotina</div>
+                <div class="timber-badge domestic">Domestic</div>
+              </div>
+            </div>
+            <div class="timber-props">
+              <div class="timber-prop">
+                <div class="timber-prop-label">Sourcing</div>
+                American black cherry is widely available from hardwood dealers throughout the eastern US and online. Typically sold kiln-dried in boards or turning blanks. Grain is generally straight and consistent; occasional mild figure occurs naturally. Relatively affordable for a premium hardwood. Green (freshly cut) cherry from orchard prunings is also excellent for turning and often free from local orchards or arborists.
+              </div>
+              <div class="timber-prop">
+                <div class="timber-prop-label">Workability</div>
+                One of the most pleasant domestic hardwoods to turn. Medium density with a fine, straight grain that cuts cleanly and crisply. Rarely catches or tears under a sharp tool. Responds well to skew chisels and spindle gouges. Produces fine shavings and minimal dust. A forgiving choice for intermediate turners working on lidded boxes or bowls — the grain telegraphs mistakes less than open-grained species.
+              </div>
+              <div class="timber-prop">
+                <div class="timber-prop-label">Finishing</div>
+                Cherry's great quality is its patina: it starts a pale pinkish-brown and deepens dramatically to a rich reddish-amber over months of light exposure. Any clear finish — oil, lacquer, hard wax — accelerates and preserves this patination. Avoid heavy pigmented stains, which mask cherry's natural colour evolution. Sands easily to 320–400 grit. A wiping varnish or Danish oil gives a warm, hand-rubbed appearance well-suited to gift pieces.
+              </div>
+            </div>
+            <div class="timber-projects-used">Used in: <span>Drawer Knobs · Lidded Storage Boxes · Honey Dipper · Gift Box Set</span></div>
+            <div class="timber-return"><a class="timber-return-link" href="#timber-index">Back to species list</a></div>
+          </div>
+
+          <!-- WALNUT -->
+          <div class="timber-card" id="timber-walnut">
+            <div class="timber-card-header">
+              <div class="timber-swatch" style="background:#5a3318;"></div>
+              <div class="timber-card-title-row">
+                <div class="timber-name">Walnut</div>
+                <div class="timber-latin">Juglans nigra</div>
+                <div class="timber-badge domestic">Domestic</div>
+              </div>
+            </div>
+            <div class="timber-props">
+              <div class="timber-prop">
+                <div class="timber-prop-label">Sourcing</div>
+                Black walnut is available from most hardwood dealers and many online turning blank suppliers across the US. Kiln-dried boards are standard; air-dried slabs and bowl blanks are common at regional mills or woodturning clubs. Walnut crotch and figured pieces are prized for bowls and hollow forms. More expensive than maple or cherry but readily accessible. Note: some individuals have a walnut wood allergy (juglone sensitivity) — worth mentioning for food-contact items.
+              </div>
+              <div class="timber-prop">
+                <div class="timber-prop-label">Workability</div>
+                An excellent turner with moderate density and good chip clearance. Sharp tools produce clean, almost silky cuts. The grain can be mildly interlocked, which may cause slight tearout on end grain — a light cut and sharp edge resolves this. Walnut dust is a known sensitiser; always use a dust mask and ensure good ventilation. The dark heartwood and pale sapwood create striking contrast in segmented work or if left together intentionally.
+              </div>
+              <div class="timber-prop">
+                <div class="timber-prop-label">Finishing</div>
+                Walnut has a naturally rich, dark chocolate colour that looks superb under virtually any clear finish. Danish oil or raw linseed oil deepens and enriches the colour with minimal effort. Hard wax oil gives a durable, satin sheen well-suited to boxes and bowls. Avoid water-based finishes, which can raise grain and produce a slightly grey cast. Walnut is among the easiest species to finish beautifully — even a simple oiled surface is impressive.
+              </div>
+            </div>
+            <div class="timber-projects-used">Used in: <span>Drawer Knobs · Bottle Stoppers · Pill Organizer · Gift Box Set · Memory Pieces</span></div>
+            <div class="timber-return"><a class="timber-return-link" href="#timber-index">Back to species list</a></div>
+          </div>
+
+          <!-- OAK -->
+          <div class="timber-card" id="timber-oak">
+            <div class="timber-card-header">
+              <div class="timber-swatch" style="background:#b08d5a;"></div>
+              <div class="timber-card-title-row">
+                <div class="timber-name">Oak</div>
+                <div class="timber-latin">Quercus alba / Q. robur</div>
+                <div class="timber-badge domestic">Domestic</div>
+              </div>
+            </div>
+            <div class="timber-props">
+              <div class="timber-prop">
+                <div class="timber-prop-label">Sourcing</div>
+                Both white oak (US) and English oak (UK) are among the most widely stocked hardwoods in the world. Available from virtually every hardwood dealer in board or blank form. Often the most affordable of the premium hardwoods. Red oak is equally common but coarser in grain — white oak is generally preferred for turned pieces due to its tighter pores. Air-dried oak from local mills or estate trees is also an excellent and sometimes free source.
+              </div>
+              <div class="timber-prop">
+                <div class="timber-prop-label">Workability</div>
+                Oak is harder and heavier than cherry or walnut and requires sharper tools and more deliberate technique. Its open grain means tearout is a real risk — light finishing cuts and a well-honed edge are essential. The medullary rays (visible as flecks on quartersawn faces) add striking visual interest but can chip at the tool edge if cutting speed is too slow. Less commonly used for fine spindle work but excellent for bowls and platters where its character shines.
+              </div>
+              <div class="timber-prop">
+                <div class="timber-prop-label">Finishing</div>
+                Oak's open grain requires a grain filler or sanding sealer for truly smooth surfaces, or a deliberate open-grain aesthetic with an oil finish. Danish oil, hard wax oil, and shellac all work well. Oak reacts with iron — avoid steel wool during finishing, as tannic acid in the wood causes black staining. White oak accepts ebonising (black iron vinegar) dramatically, which is a useful decorative option. Fuming with ammonia darkens oak to a beautiful tobacco colour used in Arts and Crafts furniture.
+              </div>
+            </div>
+            <div class="timber-projects-used">Used in: <span>Bowls · Platters · Memorial Pieces</span></div>
+            <div class="timber-return"><a class="timber-return-link" href="#timber-index">Back to species list</a></div>
+          </div>
+
+          <!-- ASH -->
+          <div class="timber-card" id="timber-ash">
+            <div class="timber-card-header">
+              <div class="timber-swatch" style="background:#c8b888;"></div>
+              <div class="timber-card-title-row">
+                <div class="timber-name">Ash</div>
+                <div class="timber-latin">Fraxinus americana / F. excelsior</div>
+                <div class="timber-badge domestic">Domestic</div>
+              </div>
+            </div>
+            <div class="timber-props">
+              <div class="timber-prop">
+                <div class="timber-prop-label">Sourcing</div>
+                White ash (North America) and European ash are widely available as lumber and turning blanks. Ash has become increasingly available at low cost due to the devastation of emerald ash borer in North America, making fallen urban and suburban ash trees a plentiful, often free source. Sourcing locally from tree services is highly recommended — much of the ash being felled would otherwise be chipped. Kiln-dried boards are available at most hardwood dealers.
+              </div>
+              <div class="timber-prop">
+                <div class="timber-prop-label">Workability</div>
+                Ash is tough, elastic, and moderately easy to turn. Its open, ring-porous grain is more pronounced than cherry or maple, which means some tearout on cross-grain cuts — keep tools sharp and make light finishing passes. Ash turns quickly and cleanly once technique is dialled in. Its flexibility and strength make it ideal for handles and utilitarian pieces. Spalted ash (partially decayed, with black zone lines) is particularly beautiful and worth seeking out.
+              </div>
+              <div class="timber-prop">
+                <div class="timber-prop-label">Finishing</div>
+                Ash has a strong grain figure that reads beautifully under penetrating oil finishes. Danish oil, tung oil, and hard wax oil all enhance the contrast between early and late wood. Like oak, its open grain may benefit from a sanding sealer before film finishes. Ash takes colour well — ebonising or liming (white filler rubbed into open grain) produce dramatic effects suited to contemporary gift pieces. Sands to a smooth surface if working with fine grits.
+              </div>
+            </div>
+            <div class="timber-projects-used">Used in: <span>Handles · Platters · Segmented Work · Memory Pieces from fallen trees</span></div>
+            <div class="timber-return"><a class="timber-return-link" href="#timber-index">Back to species list</a></div>
+          </div>
+
+          <!-- PADAUK -->
+          <div class="timber-card" id="timber-padauk">
+            <div class="timber-card-header">
+              <div class="timber-swatch" style="background:#a83822;"></div>
+              <div class="timber-card-title-row">
+                <div class="timber-name">Padauk</div>
+                <div class="timber-latin">Pterocarpus soyauxii</div>
+                <div class="timber-badge exotic">Exotic</div>
+              </div>
+            </div>
+            <div class="timber-props">
+              <div class="timber-prop">
+                <div class="timber-prop-label">Sourcing</div>
+                African padauk is sourced from equatorial West Africa (Cameroon, Nigeria, Congo). Available from specialist exotic timber dealers, online retailers, and woodturning suppliers in the US, UK, and Australia. Typically sold as small turning blanks or pen blanks due to its popularity for accent work. Relatively affordable among exotic species. Look for CITES-compliant sourcing — padauk is not currently restricted but sourcing from responsible dealers is good practice.
+              </div>
+              <div class="timber-prop">
+                <div class="timber-prop-label">Workability</div>
+                Padauk is moderately dense with interlocked grain and turns surprisingly well for an exotic. It cuts cleanly with sharp tools but can produce fine, abrasive dust — always wear a respirator, as padauk dust is a known sensitiser and may cause skin irritation. Its interlocked grain can cause occasional tearout; light, supported cuts help. The vivid red colour makes even small accent pieces visually striking, and it is particularly popular in segmented turning for colour contrast.
+              </div>
+              <div class="timber-prop">
+                <div class="timber-prop-label">Finishing</div>
+                Padauk's vibrant scarlet-red colour is its defining characteristic — but it fades on exposure to UV light over time, settling to a deep russet-brown. A UV-inhibiting finish (oil-based urethane or an outdoor-rated lacquer) slows this transition. Oil finishes applied wet appear to deepen the red dramatically. Sand through 400 grit for a smooth base. Avoid water-based finishes, which can cause raised grain and blotchy colour. The colour change is irreversible but produces a handsome result in its own right.
+              </div>
+            </div>
+            <div class="timber-projects-used">Used in: <span>Pill Organizer · Segmented Pieces · Accent Bands · Pen Blanks</span></div>
+            <div class="timber-return"><a class="timber-return-link" href="#timber-index">Back to species list</a></div>
+          </div>
+
+          <!-- PURPLEHEART -->
+          <div class="timber-card" id="timber-purpleheart">
+            <div class="timber-card-header">
+              <div class="timber-swatch" style="background:#5a3070;"></div>
+              <div class="timber-card-title-row">
+                <div class="timber-name">Purpleheart</div>
+                <div class="timber-latin">Peltogyne spp.</div>
+                <div class="timber-badge exotic">Exotic</div>
+              </div>
+            </div>
+            <div class="timber-props">
+              <div class="timber-prop">
+                <div class="timber-prop-label">Sourcing</div>
+                Purpleheart is native to tropical Central and South America (Brazil, Guyana, Suriname). Available from most exotic hardwood dealers and online turning blank suppliers. Sold in boards, bowl blanks, and pen blanks — pen blanks are the most economical entry point. Moderately priced for an exotic. The colour varies in intensity by board; selecting stock in person at a dealer allows better colour matching for segmented work.
+              </div>
+              <div class="timber-prop">
+                <div class="timber-prop-label">Workability</div>
+                A very dense, hard timber that dulls tools quickly. Carbide-tipped tools or frequent sharpening is recommended. It can be brittle and prone to checking if dried too quickly or forced. Despite its density it turns to a smooth surface with care. Dust is a sensitiser — respiratory protection is important. Its hardness makes it excellent for accent bands in segmented turning where fine, crisp lines are required. Avoid overheating at the tool edge, which will cause the wood to turn brown (heat-reversible by sanding).
+              </div>
+              <div class="timber-prop">
+                <div class="timber-prop-label">Finishing</div>
+                Fresh-cut purpleheart is a dull brown-grey that transforms to vivid violet-purple on exposure to air — this happens within minutes and is one of its most satisfying qualities. Exposure to UV and light will eventually fade it to a dark brownish-purple; UV-inhibiting finishes slow this. Oil finishes and shellac both enhance the colour. Keep finished pieces away from prolonged direct sunlight. Sands well but generates heat quickly — work through grits with moderate pressure only.
+              </div>
+            </div>
+            <div class="timber-projects-used">Used in: <span>Pill Organizer · Segmented Boxes · Accent Rings · Pens</span></div>
+            <div class="timber-return"><a class="timber-return-link" href="#timber-index">Back to species list</a></div>
+          </div>
+
+          <!-- PINE -->
+          <div class="timber-card" id="timber-pine">
+            <div class="timber-card-header">
+              <div class="timber-swatch" style="background:#d4b060;"></div>
+              <div class="timber-card-title-row">
+                <div class="timber-name">Pine</div>
+                <div class="timber-latin">Pinus strobus / P. sylvestris</div>
+                <div class="timber-badge domestic">Domestic</div>
+              </div>
+            </div>
+            <div class="timber-props">
+              <div class="timber-prop">
+                <div class="timber-prop-label">Sourcing</div>
+                Eastern white pine (US) and Scots pine (UK/Europe) are among the most available softwoods in the world. Found at every timber merchant, big-box store, and sawmill. Turning-grade pine is best sourced from hardwood dealers or specialist suppliers — construction-grade pine is often too knotty and resinous. Old-growth salvaged pine (from barns, floors, beams) turns beautifully and is worth seeking from architectural salvage yards.
+              </div>
+              <div class="timber-prop">
+                <div class="timber-prop-label">Workability</div>
+                Pine is soft, light, and turns quickly — but its softness is a challenge. Dull tools compress and tear rather than cut; extremely sharp tools and a confident feed rate are essential. Knots are almost impossible to turn cleanly and should be avoided in blanks. Pine's resin can load sandpaper quickly; use fresh paper and avoid over-sanding. Best suited to larger, simpler forms — fine detail is difficult. Excellent as a learning species for new turners due to low cost and availability.
+              </div>
+              <div class="timber-prop">
+                <div class="timber-prop-label">Finishing</div>
+                Pine is resinous, which can bleed through film finishes. De-resin with acetone or mineral spirits before finishing if resin pockets are present. Shellac makes an excellent sealer coat before lacquer or varnish. Oil finishes on pine can remain tacky — wax-based finishes or lacquer are often more reliable. Pine's pale, creamy colour and visible growth rings give it a casual, rustic quality. Paint and milk paint take beautifully on pine for decorative turned items.
+              </div>
+            </div>
+            <div class="timber-projects-used">Used in: <span>Practice Blanks · Decorative Turnings · Painted Items · Salvage Memory Pieces</span></div>
+            <div class="timber-return"><a class="timber-return-link" href="#timber-index">Back to species list</a></div>
+          </div>
+
+          <!-- EBONY -->
+          <div class="timber-card" id="timber-ebony">
+            <div class="timber-card-header">
+              <div class="timber-swatch" style="background:#1a1210;"></div>
+              <div class="timber-card-title-row">
+                <div class="timber-name">Ebony</div>
+                <div class="timber-latin">Diospyros spp.</div>
+                <div class="timber-badge exotic">Exotic</div>
+              </div>
+            </div>
+            <div class="timber-props">
+              <div class="timber-prop">
+                <div class="timber-prop-label">Sourcing</div>
+                True ebony (Gabon, Macassar, Ceylon varieties) is one of the world's most heavily regulated timbers. Gabon ebony (D. crassiflora) is CITES Appendix II — commercial trade requires documentation. Source only from reputable dealers who provide legal provenance. Available in small blanks, pen blanks, and off-cuts from specialist exotic wood suppliers. Due to its scarcity and regulation, use ebony as an accent species — finials, small details, pull knobs — rather than for large blanks.
+              </div>
+              <div class="timber-prop">
+                <div class="timber-prop-label">Workability</div>
+                Exceptionally dense and hard — one of the heaviest commercial timbers. Extremely sharp tools are non-negotiable; even slightly dull edges will burnish rather than cut, producing heat and a poor surface. Light cuts at moderate speed work best. Its brittleness means edges can chip — support cuts carefully near thin sections. Ebony dust is toxic and a known sensitiser; a high-quality respirator and dust extraction are essential. Despite the challenges, ebony turns to an extraordinarily smooth, lustrous surface.
+              </div>
+              <div class="timber-prop">
+                <div class="timber-prop-label">Finishing</div>
+                Ebony is unique in that it often requires no finish at all — its dense, oily surface can be burnished to a high gloss with shavings or leather during the final spinning pass. If a finish is desired, wax or a hard wax oil is ideal. Avoid oil finishes that may remain tacky on ebony's oily surface. Ebony's natural lustre and jet-black colour are its own finish — the goal is to protect without obscuring. A light buffing with carnauba wax produces a jewel-like result.
+              </div>
+            </div>
+            <div class="timber-projects-used">Used in: <span>Finials · Accent Details · Pull Knobs · Pen Components</span></div>
+            <div class="timber-return"><a class="timber-return-link" href="#timber-index">Back to species list</a></div>
+          </div>
+
+          <!-- RED CEDAR -->
+          <div class="timber-card" id="timber-redcedar">
+            <div class="timber-card-header">
+              <div class="timber-swatch" style="background:#8b3a2e;"></div>
+              <div class="timber-card-title-row">
+                <div class="timber-name">Red Cedar</div>
+                <div class="timber-latin">Thuja plicata / Juniperus virginiana</div>
+                <div class="timber-badge domestic">Domestic</div>
+              </div>
+            </div>
+            <div class="timber-props">
+              <div class="timber-prop">
+                <div class="timber-prop-label">Sourcing</div>
+                Two distinct species go by this name. Western red cedar (Thuja plicata) comes from the Pacific Northwest and is widely available from lumber yards and hardwood dealers across North America. Eastern red cedar (Juniperus virginiana) is more commonly found at regional sawmills, from tree services, or as salvage — it is rarely stocked at big-box stores. Both are affordable. Eastern red cedar in particular is available free or cheaply from rural fence-post clearing or land management. Look for straight-grained, knot-free sections for turning blanks.
+              </div>
+              <div class="timber-prop">
+                <div class="timber-prop-label">Workability</div>
+                Red cedar is a softwood, which means sharp tools and a confident hand are especially important — dull edges will compress and fuzz rather than cut cleanly. Western red cedar is lighter and more brittle; thin sections can split unexpectedly. Eastern red cedar is denser and more forgiving, turning to a surprisingly smooth surface. Both species are highly aromatic — the pleasant scent is a selling point for gift pieces like closet balls or drawer inserts. Work in a well-ventilated area as the aromatic oils can irritate the respiratory tract with prolonged exposure.
+              </div>
+              <div class="timber-prop">
+                <div class="timber-prop-label">Finishing</div>
+                Red cedar's natural oils make it somewhat resistant to penetrating finishes — test on offcuts first. A light coat of danish oil or pure tung oil enhances the rich red and cream colour contrast while preserving the natural aroma. Film finishes like lacquer or shellac seal in the scent, which may be desirable (or not) depending on the end use. For aromatic gift items such as sachets or closet inserts, leave the surface unfinished or lightly waxed to allow the oils to breathe. Sands easily but raises grain readily — dampen and re-sand before final grit.
+              </div>
+            </div>
+            <div class="timber-projects-used">Used in: <span>Aromatic Closet Balls · Drawer Inserts · Small Bowls · Memory Pieces · Decorative Turnings</span></div>
+            <div class="timber-return"><a class="timber-return-link" href="#timber-index">Back to species list</a></div>
+          </div>
+
+          <!-- IRONWOOD -->
+          <div class="timber-card" id="timber-ironwood">
+            <div class="timber-card-header">
+              <div class="timber-swatch" style="background:#3a2e22;"></div>
+              <div class="timber-card-title-row">
+                <div class="timber-name">Ironwood</div>
+                <div class="timber-latin">Ostrya virginiana / Olneya tesota</div>
+                <div class="timber-badge domestic">Domestic</div>
+              </div>
+            </div>
+            <div class="timber-props">
+              <div class="timber-prop">
+                <div class="timber-prop-label">Sourcing</div>
+                "Ironwood" covers several exceptionally hard, dense species. Eastern hophornbeam (Ostrya virginiana) is found across eastern North America and sourced primarily from sawmills, tree services, or directly from felled urban trees — it is rarely stocked at timber dealers due to its small diameter and regional nature. Desert ironwood (Olneya tesota) is found in the Sonoran Desert and, as a protected species, may only be legally harvested as salvage from naturally fallen trees — source with care and documentation. Both are most readily obtained by knowing local arborists or woodturning clubs who have access to felled material.
+              </div>
+              <div class="timber-prop">
+                <div class="timber-prop-label">Workability</div>
+                Ironwood is among the hardest and densest timbers in North America — it will sink in water. This density is both its challenge and its appeal. Carbide tools are strongly recommended; HSS tools dull almost immediately and require constant honing. Take light, deliberate cuts at moderate speed. The wood turns to an extraordinarily smooth, almost self-burnishing surface due to its density. It produces fine, heavy shavings and abrasive dust — a respirator is essential. Thin sections are extremely strong and hold crisp detail beautifully. Despite the difficulty, the results are worth the effort: ironwood pieces have a weight and solidity that feel genuinely precious.
+              </div>
+              <div class="timber-prop">
+                <div class="timber-prop-label">Finishing</div>
+                Ironwood's extreme density means it accepts very little finish by penetration — surface finishes sit on top rather than soaking in. A hard wax oil or paste wax applied to the spinning piece and buffed produces an exceptional natural lustre that rivals ebony. Oil finishes may remain tacky; test before committing to a full application. The wood's inherent colour — ranging from pale cream-grey in hophornbeam to rich dark brown in desert ironwood — is its own decoration. Sanding through to 600 grit and then burnishing with a paper bag or leather strop produces a surface that genuinely does not require further finishing.
+              </div>
+            </div>
+            <div class="timber-projects-used">Used in: <span>Handles · Mallet Heads · Small Bowls · Accent Details · Heirloom Pieces</span></div>
+            <div class="timber-return"><a class="timber-return-link" href="#timber-index">Back to species list</a></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Materials & Tools Checklist ── -->
+  <div class="checklist-section" id="checklist-section">
+    <div class="checklist-toggle" onclick="toggleChecklist()">
+      <div class="checklist-toggle-left">
+        <div>
+          <div class="checklist-toggle-label">Pre-project checklist</div>
+          <div class="checklist-toggle-title">Materials & Tools Checklist</div>
+        </div>
+      </div>
+      <div class="checklist-progress-wrap">
+        <div class="checklist-progress-bar"><div class="checklist-progress-fill" id="checklist-fill"></div></div>
+        <div class="checklist-progress-text" id="checklist-count">0 / 0</div>
+        <div class="checklist-toggle-arrow">+</div>
+      </div>
+    </div>
+    <div class="checklist-body">
+      <div class="checklist-inner">
+        <div class="checklist-intro">
+          Work through this list before starting. Not all items apply to every project. Check off what you have confirmed. Progress is not saved between sessions.
+        </div>
+        <div class="checklist-categories">
+
+          <!-- LATHE SETUP -->
+          <div class="checklist-cat">
+            <div class="checklist-cat-header">
+              <span class="checklist-cat-icon">⚙</span>
+              <span class="checklist-cat-title">Lathe Setup</span>
+              <span class="checklist-cat-count" id="count-setup"></span>
+            </div>
+            <div class="checklist-item" data-cat="setup" onclick="toggleCheckItem(this)">
+              <div class="checklist-box"></div>
+              <span class="checklist-item-label">Drive center & live center<span class="checklist-item-note">For between-centers spindle work</span></span>
+            </div>
+            <div class="checklist-item" data-cat="setup" onclick="toggleCheckItem(this)">
+              <div class="checklist-box"></div>
+              <span class="checklist-item-label">4-jaw scroll chuck<span class="checklist-item-note">Essential for boxes, bowls, hollow forms</span></span>
+            </div>
+            <div class="checklist-item" data-cat="setup" onclick="toggleCheckItem(this)">
+              <div class="checklist-box"></div>
+              <span class="checklist-item-label">Faceplate with screws<span class="checklist-item-note">For larger diameter face grain work</span></span>
+            </div>
+            <div class="checklist-item" data-cat="setup" onclick="toggleCheckItem(this)">
+              <div class="checklist-box"></div>
+              <span class="checklist-item-label">Steady rest<span class="checklist-item-note">Required for spindles over 18–24"</span></span>
+            </div>
+            <div class="checklist-item" data-cat="setup" onclick="toggleCheckItem(this)">
+              <div class="checklist-box"></div>
+              <span class="checklist-item-label">Tool rest set & tightened<span class="checklist-item-note">Close to work, repositioned as you progress</span></span>
+            </div>
+            <div class="checklist-item" data-cat="setup" onclick="toggleCheckItem(this)">
+              <div class="checklist-box"></div>
+              <span class="checklist-item-label">RPM checked for blank size<span class="checklist-item-note">Larger diameter = slower speed</span></span>
+            </div>
+          </div>
+
+          <!-- CUTTING TOOLS -->
+          <div class="checklist-cat">
+            <div class="checklist-cat-header">
+              <span class="checklist-cat-icon">✦</span>
+              <span class="checklist-cat-title">Cutting Tools</span>
+              <span class="checklist-cat-count" id="count-tools"></span>
+            </div>
+            <div class="checklist-item" data-cat="tools" onclick="toggleCheckItem(this)">
+              <div class="checklist-box"></div>
+              <span class="checklist-item-label">Roughing gouge<span class="checklist-item-note">For removing bulk from square blanks</span></span>
+            </div>
+            <div class="checklist-item" data-cat="tools" onclick="toggleCheckItem(this)">
+              <div class="checklist-box"></div>
+              <span class="checklist-item-label">Spindle gouge (½")<span class="checklist-item-note">Coves, beads, gentle curves</span></span>
+            </div>
+            <div class="checklist-item" data-cat="tools" onclick="toggleCheckItem(this)">
+              <div class="checklist-box"></div>
+              <span class="checklist-item-label">Skew chisel<span class="checklist-item-note">Smooth planing cuts on spindle work</span></span>
+            </div>
+            <div class="checklist-item" data-cat="tools" onclick="toggleCheckItem(this)">
+              <div class="checklist-box"></div>
+              <span class="checklist-item-label">Bowl gouge (⅜" or ½")<span class="checklist-item-note">For bowls, hollow forms, box bodies</span></span>
+            </div>
+            <div class="checklist-item" data-cat="tools" onclick="toggleCheckItem(this)">
+              <div class="checklist-box"></div>
+              <span class="checklist-item-label">Parting tool<span class="checklist-item-note">Cutting off, sizing tenons, forming lid fits</span></span>
+            </div>
+            <div class="checklist-item" data-cat="tools" onclick="toggleCheckItem(this)">
+              <div class="checklist-box"></div>
+              <span class="checklist-item-label">Hollowing tool / scraper<span class="checklist-item-note">Hollow forms, boxes, urns</span></span>
+            </div>
+            <div class="checklist-item" data-cat="tools" onclick="toggleCheckItem(this)">
+              <div class="checklist-box"></div>
+              <span class="checklist-item-label">All tools freshly sharpened<span class="checklist-item-note">Sharp tools are safer. Strop before you start.</span></span>
+            </div>
+          </div>
+
+          <!-- WOOD & MATERIALS -->
+          <div class="checklist-cat">
+            <div class="checklist-cat-header">
+              <span class="checklist-cat-icon">◈</span>
+              <span class="checklist-cat-title">Wood & Materials</span>
+              <span class="checklist-cat-count" id="count-materials"></span>
+            </div>
+            <div class="checklist-item" data-cat="materials" onclick="toggleCheckItem(this)">
+              <div class="checklist-box"></div>
+              <span class="checklist-item-label">Blank sized and squared<span class="checklist-item-note">Knock corners off on bandsaw first</span></span>
+            </div>
+            <div class="checklist-item" data-cat="materials" onclick="toggleCheckItem(this)">
+              <div class="checklist-box"></div>
+              <span class="checklist-item-label">Wood species chosen for project<span class="checklist-item-note">Maple, cherry, walnut, ash — match to use</span></span>
+            </div>
+            <div class="checklist-item" data-cat="materials" onclick="toggleCheckItem(this)">
+              <div class="checklist-box"></div>
+              <span class="checklist-item-label">Moisture content acceptable<span class="checklist-item-note">Ideally under 15% for finished pieces</span></span>
+            </div>
+            <div class="checklist-item" data-cat="materials" onclick="toggleCheckItem(this)">
+              <div class="checklist-box"></div>
+              <span class="checklist-item-label">Scrap blanks for test runs<span class="checklist-item-note">Always prototype on cheap pine first</span></span>
+            </div>
+            <div class="checklist-item" data-cat="materials" onclick="toggleCheckItem(this)">
+              <div class="checklist-box"></div>
+              <span class="checklist-item-label">Sandpaper grits stocked<span class="checklist-item-note">80, 120, 180, 220 minimum; 320 for finishes</span></span>
+            </div>
+            <div class="checklist-item" data-cat="materials" onclick="toggleCheckItem(this)">
+              <div class="checklist-box"></div>
+              <span class="checklist-item-label">Finish selected and on hand<span class="checklist-item-note">Oil, wax, lacquer — match to function</span></span>
+            </div>
+          </div>
+
+          <!-- SAFETY -->
+          <div class="checklist-cat">
+            <div class="checklist-cat-header">
+              <span class="checklist-cat-icon">◉</span>
+              <span class="checklist-cat-title">Safety</span>
+              <span class="checklist-cat-count" id="count-safety"></span>
+            </div>
+            <div class="checklist-item" data-cat="safety" onclick="toggleCheckItem(this)">
+              <div class="checklist-box"></div>
+              <span class="checklist-item-label">Face shield worn (not just goggles)<span class="checklist-item-note">A catch can come from any direction</span></span>
+            </div>
+            <div class="checklist-item" data-cat="safety" onclick="toggleCheckItem(this)">
+              <div class="checklist-box"></div>
+              <span class="checklist-item-label">No loose clothing or jewelry<span class="checklist-item-note">Remove rings, ties, dangling cuffs</span></span>
+            </div>
+            <div class="checklist-item" data-cat="safety" onclick="toggleCheckItem(this)">
+              <div class="checklist-box"></div>
+              <span class="checklist-item-label">Dust collection running<span class="checklist-item-note">Or respiratory mask rated for fine dust</span></span>
+            </div>
+            <div class="checklist-item" data-cat="safety" onclick="toggleCheckItem(this)">
+              <div class="checklist-box"></div>
+              <span class="checklist-item-label">Blank inspected for cracks & inclusions<span class="checklist-item-note">Tap it — a dull thud means hidden cracks</span></span>
+            </div>
+            <div class="checklist-item" data-cat="safety" onclick="toggleCheckItem(this)">
+              <div class="checklist-box"></div>
+              <span class="checklist-item-label">Chuck / faceplate fully tightened<span class="checklist-item-note">Give the key a final check before switching on</span></span>
+            </div>
+            <div class="checklist-item" data-cat="safety" onclick="toggleCheckItem(this)">
+              <div class="checklist-box"></div>
+              <span class="checklist-item-label">Slow speed test run done<span class="checklist-item-note">Start slow, check for balance, then increase</span></span>
+            </div>
+          </div>
+
+        </div><!-- end .checklist-categories -->
+
+        <div class="checklist-actions">
+          <button class="checklist-action-btn primary" onclick="checkAll()">Check All</button>
+          <button class="checklist-action-btn" onclick="clearAll()">Clear All</button>
+          <span class="checklist-saved-note" id="saved-note">✓ Saved</span>
+          <button class="checklist-action-btn" onclick="printChecklist()" style="margin-left:auto;">⎙ Print Checklist</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Lathe Selector / Decision Tree ── -->
+  <div class="selector-section" id="lathe-selector">
+    <div class="selector-toggle" onclick="toggleSelector()">
+      <div class="selector-toggle-left">
+        <div>
+          <div class="selector-toggle-label">Buying Guide</div>
+          <div class="selector-toggle-title">Find Your Lathe</div>
+        </div>
+      </div>
+      <div class="selector-toggle-arrow">+</div>
+    </div>
+    <div class="selector-body">
+      <div class="selector-inner">
+        <p class="selector-intro">Answer three questions to find the right lathe for your situation — from first-time hobby purchases to full shop setups. Each result includes specific model recommendations and a buying tip.</p>
+
+        <div class="dt-progress-wrap">
+          <div class="dt-progress-label">
+            <span id="dt-step-label">Begin</span>
+            <span id="dt-pct">0%</span>
+          </div>
+          <div class="dt-progress-bar"><div class="dt-progress-fill" id="dt-fill"></div></div>
+        </div>
+
+        <div id="dt-breadcrumb" class="dt-breadcrumb"></div>
+
+        <!-- Step 0 -->
+        <div class="dt-step active" id="dt-s0">
+          <div class="dt-question">What's your primary purpose for buying a wood lathe?</div>
+          <div class="dt-options">
+            <button type="button" class="dt-option" onclick="dtGo('hobby', 'Hobby / Learning', 1)">Hobby / Learning</button>
+            <button type="button" class="dt-option" onclick="dtGo('semi', 'Semi-Professional / Craft Sales', 1)">Semi-Professional / Craft Sales</button>
+            <button type="button" class="dt-option" onclick="dtGo('pro', 'Professional / Shop Use', 1)">Professional / Shop Use</button>
+          </div>
+        </div>
+
+        <!-- Step 1a: Hobby → budget -->
+        <div class="dt-step" id="dt-s1-hobby">
+          <div class="dt-question">What's your budget?</div>
+          <div class="dt-options">
+            <button type="button" class="dt-option" onclick="dtResult('mini')">Under $400</button>
+            <button type="button" class="dt-option" onclick="dtGo('hobby-mid', '$400–$1,000', 2)">$400 – $1,000</button>
+          </div>
+          <button type="button" class="dt-back" onclick="dtBack()">← Back</button>
+        </div>
+
+        <!-- Step 2a: Hobby mid-range → project size -->
+        <div class="dt-step" id="dt-s2-hobby-mid">
+          <div class="dt-question">What size projects do you envision?</div>
+          <div class="dt-options">
+            <button type="button" class="dt-option" onclick="dtResult('midi')">Small items (pens, bowls under 10")</button>
+            <button type="button" class="dt-option" onclick="dtResult('full-entry')">Medium bowls & spindles</button>
+          </div>
+          <button type="button" class="dt-back" onclick="dtBack()">← Back</button>
+        </div>
+
+        <!-- Step 1b: Semi-pro → turning type -->
+        <div class="dt-step" id="dt-s1-semi">
+          <div class="dt-question">What type of turning will you focus on?</div>
+          <div class="dt-options">
+            <button type="button" class="dt-option" onclick="dtResult('heavy-midi')">Bowls & Face Work</button>
+            <button type="button" class="dt-option" onclick="dtResult('full-spindle')">Spindle / Production Work</button>
+            <button type="button" class="dt-option" onclick="dtResult('midi-pen')">Pens & Small Turned Items</button>
+          </div>
+          <button type="button" class="dt-back" onclick="dtBack()">← Back</button>
+        </div>
+
+        <!-- Step 1c: Pro → scale -->
+        <div class="dt-step" id="dt-s1-pro">
+          <div class="dt-question">What's your production scale?</div>
+          <div class="dt-options">
+            <button type="button" class="dt-option" onclick="dtResult('premium')">Small shop / studio</button>
+            <button type="button" class="dt-option" onclick="dtResult('cnc')">High-volume production</button>
+          </div>
+          <button type="button" class="dt-back" onclick="dtBack()">← Back</button>
+        </div>
+
+        <!-- Result container -->
+        <div class="dt-step" id="dt-result-view">
+          <div class="dt-result" id="dt-result-card"></div>
+          <button type="button" class="dt-back" onclick="dtBack()" style="margin-top:12px;">← Back</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Donate Section ── -->
+  <div class="donate-section">
+    <div class="donate-label">Support this work</div>
+    <div class="donate-heading">Buy me some wood shavings</div>
+    <p class="donate-text">If these projects have helped you make something meaningful for someone else, consider a small donation. It goes toward timber, tooling, and keeping the lathe running.</p>
+    <div class="donate-btn-wrap">
+      <a class="donate-btn" href="https://www.paypal.com/donate/?hosted_button_id=Q3STGTF2UDE9G" target="_blank" rel="noopener">
+        <!-- PayPal logo mark -->
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944 3.217a.773.773 0 0 1 .764-.653h7.113c2.49 0 4.247.596 5.225 1.77.455.55.745 1.16.882 1.817.148.707.133 1.537-.042 2.468l-.007.04v.39l.233.132c.194.107.371.238.523.39.242.242.423.534.541.872.122.347.157.752.105 1.207-.066.573-.213 1.072-.436 1.485a3.502 3.502 0 0 1-.888 1.073c-.35.278-.771.494-1.25.641-.46.143-.987.216-1.564.216h-.373a1.12 1.12 0 0 0-1.108.951l-.083.455-.546 3.463-.025.13a.11.11 0 0 1-.108.094H7.076z" fill="#fff"/>
+          <path d="M19.54 8.505c-.012.074-.026.149-.041.226C18.698 12.73 16.2 14.2 12.96 14.2H11.31a.965.965 0 0 0-.954.818L9.62 21.337h2.12a.846.846 0 0 0 .836-.714l.035-.18.663-4.203.043-.232a.846.846 0 0 1 .836-.714h.526c3.41 0 6.079-1.385 6.86-5.39.325-1.671.157-3.067-.999-4.399z" fill="rgba(255,255,255,0.7)"/>
+        </svg>
+        Donate via PayPal
+      </a>
+      <span class="donate-note">Secure · Any amount helps</span>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    <div class="fn-label">Before you start</div>
+    <p>Spend time with the person you are making it for. Observe how they work. Ask what the current tool or object fails to do. The difference between what someone requests and what they actually need is where the work matters.</p>
+  </div>
+</div>
+
+<script>
+var INFO = {
+  beginner: { label: "Skill Level: Beginner", text: "Beginner projects focus on basic spindle technique: mounting between centers, roughing to a cylinder, and refining with a skew chisel. A rolling pin is ideal because the long gentle taper trains your tool control without punishing mistakes. Expect your first one to be rough - that is normal and expected." },
+  spindle: { label: "Spindle Work", text: "Spindle turning means the wood grain runs parallel to the lathe bed. Core tools: roughing gouge to remove bulk, spindle gouge for shaping, skew chisel for smooth surfaces. Always cut downhill from large diameter to small. Keep your tool rest close to the work and move it as you progress." },
+  "maple-cherry": { label: "Maple / Cherry", text: "Both are tight-grained hardwoods ideal for food contact. Maple is harder and more forgiving to turn; cherry is softer with a warm reddish tone that deepens beautifully over time. Avoid open-grained woods like oak or ash for kitchen items - their pores can harbor bacteria." },
+  "beg-int": { label: "Skill Level: Beginner to Intermediate", text: "You need basic spindle control for the handle, then confidence with a carving knife off the lathe. The challenge is transitioning from round to flat at the neck. Practice the handle shape on scrap first - once you are happy with it, commit to carving the bowl." },
+  "spindle-carve": { label: "Spindle + Carving", text: "Turn the handle and rough blank on the lathe, then part it off and move to carving. Use a sloyd knife or sweep gouge to hollow the bowl. Work with the grain, not against it. Sand to 220 grit and finish with repeated coats of food-grade oil, letting each coat fully soak in." },
+  "food-safe": { label: "Food-Safe Finish", text: "Raw linseed oil, walnut oil, and pure tung oil are all food-safe once fully cured. Avoid boiled linseed oil (contains metallic driers) and any film finishes like lacquer on food-contact surfaces. Apply 3 to 5 thin coats, buffing between each. Re-oil when the wood looks dry." },
+  faceplate: { label: "Faceplate / Chuck", text: "A 4-jaw scroll chuck is essential for box making. It lets you reverse-chuck the piece to finish the base cleanly and re-mount precisely. Learn to use the chuck jaws in both expansion and compression modes. For spindle work like knobs it also speeds up repeated production significantly." },
+  hardwood: { label: "Any Hardwood", text: "For knobs and handles, almost any hardwood works. Consider the context: walnut feels luxurious and dark, maple is clean and modern, cherry warms with age. Exotics like padauk or purpleheart add visual drama. Avoid softwoods - they dent too easily with daily use." },
+  intermediate: { label: "Skill Level: Intermediate", text: "Intermediate projects require faceplate or chuck technique, precise parting, and the ability to match diameters between separately-turned pieces. The fitting challenge - sneaking up on the perfect friction fit for a lid - is what defines this level. Expect to remake a lid or two before nailing it." },
+  endgrain: { label: "End Grain Preferred", text: "End grain boxes (grain running top to bottom) are preferred because the lid and body expand and contract together with humidity changes, keeping the fit consistent year-round. Face grain boxes are more prone to the lid seizing in summer and loosening in winter. Cut both lid and body from the same piece." },
+  segmented: { label: "Segmented Turning", text: "For a pill organizer you can turn individual small boxes, or attempt segmented ring construction where contrasting woods are glued up before turning. Segmented work requires accurate miter cuts before any lathe work begins. Start with individual boxes and graduate to segmented once you are comfortable." },
+  contrast: { label: "Contrasting Woods", text: "Pairing woods for visual contrast: maple and walnut is a classic combination; cherry and ebonized oak is dramatic; padauk and maple gives vivid orange-and-white. For a weekly pill organizer, 7 different species (one per day) is a beautiful approach. Match finish type across all pieces to tie the set together." },
+  "long-spindle": { label: "Long Spindle Turning", text: "Long spindle turning (anything over 18 inches) requires extra support to prevent whip and vibration. Mount between centers, start at low RPM, and use a steady rest if available. Turn in sections from each end toward the middle. Keep cuts light - never force a tool into a flexing blank." },
+  "steady-rest": { label: "Steady Rest", text: "A steady rest is a lathe accessory that cradles the spinning blank at its midpoint, preventing flex and vibration. Essential for any spindle over 24 inches. You can buy one or build one from MDF and bearing wheels. Position it just ahead of where you are cutting, moving it along as you progress." },
+  "ash-hickory": { label: "Ash / Hickory", text: "Both are ring-porous hardwoods with exceptional shock resistance and flex strength - the same reason they are used for tool handles and baseball bats. Ash is slightly easier to turn and has a pronounced grain. Hickory is harder and denser. Both respond well to an oil finish that highlights the grain." },
+  advanced: { label: "Skill Level: Advanced", text: "Urns require hollow form technique - turning the inside of an enclosed vessel through a small opening using bent hollowing tools. You work largely by feel and sound, judging wall thickness as you go. The interior volume must meet practical requirements (about 200 cubic inches for an adult). Dry-run your dimensions before cutting." },
+  hollow: { label: "Hollow Form Technique", text: "Hollow form turning uses long-handled tools inserted through a small opening to remove interior material. Work in stages, going deeper each pass. Use a wall-thickness gauge constantly. Vibration increases as walls thin - slow the lathe as you approach final thickness. A good target is 3/16 to 1/4 inch wall thickness." },
+  "meaningful-wood": { label: "Choosing the Wood", text: "The most meaningful urns are often made from a tree connected to the person - a backyard maple, a fallen oak from family land. If that is not possible, consider their character: walnut for quiet dignity, cherry for warmth, white oak for steadfastness. The story of the wood becomes part of the gift itself." },
+  hcd: { label: "Human-Centered Design", text: "Before turning anything, observe the person using the existing tool. Where does their grip fail? Is it diameter (too thin), weight (too light), or surface (too slippery)? Larger diameter handles (1.5 to 2 inches) significantly reduce grip effort. A slight taper or finger groove can help orient the tool without looking." },
+  "custom-fit": { label: "Custom Fit", text: "Make a series of test handles in different diameters and profiles from cheap pine first. Let the person hold each one and give feedback before committing to a final hardwood version. Consider texture as well as shape - a lightly sanded or wire-brushed surface gives grip without added bulk." },
+  ot: { label: "OT Collaboration", text: "Occupational therapists specialize in adaptive equipment and can tell you exactly what grip profile will help a specific condition - whether arthritis, stroke-related weakness, or motor control issues. Many OTs are delighted to collaborate with makers. Bring prototype handles and be ready to iterate based on their feedback." },
+  "ornament": { label: "Turned Ornaments", text: "Christmas ornaments are ideal shop gifts — fast to turn, use up small offcuts, and look stunning in contrasting woods or with a simple carved or burned pattern. Turn a sphere or teardrop shape, drill a small hole at the top for a screw eye, and finish with wax or oil. A set of 12 in different species is an extraordinary gift." },
+  "finial-detail": { label: "Finial & Detail Work", text: "Ornaments reward fine detail: crisp coves, delicate finials, thin walls. Work at higher RPM for small diameters. A skew chisel used confidently will give you a glass-smooth surface that needs minimal sanding. Practice finial profiles on scrap until you can cut them without hesitation." },
+  "small-offcuts": { label: "Using Small Offcuts", text: "Ornaments, bottle stoppers, and honey dippers are perfect uses for offcuts too small for larger projects. Keep a scrap bin near the lathe. Even a 2-inch cube of walnut or cherry can become a beautiful ornament or stopper. Small pieces spin faster and require less force — great for practising fine technique." },
+  "honey-dipper": { label: "Honey Dipper Tips", text: "The grooves on a honey dipper are turned with a narrow parting tool or skew. Space them evenly — about 5 to 7 grooves — and make them deep enough to hold honey but shallow enough that the drip releases cleanly. Finish with pure beeswax rubbed on while spinning: food-safe, beautiful, and fitting." },
+  "bottle-stopper": { label: "Bottle Stopper Hardware", text: "Bottle stopper mandrels are inexpensive and available from woodturning suppliers. They come with a tapered cork or silicone stopper pre-fitted. Turn the decorative top to whatever shape you like, drill a 3/8 inch hole in the base, and glue in the mandrel. Acrylic blanks and exotic wood burls work especially well." },
+  "wine-gift": { label: "Pairing with Wine", text: "A turned bottle stopper makes an exceptional host gift when presented alongside a good bottle of wine. Package them together in a simple kraft box with a card explaining the wood species. The contrast between the rustic craft and the refined setting is part of the charm. Personalize the top with a burned initial for extra impact." },
+  "memory-piece": { label: "Memory Piece Making", text: "A memory piece — a small turned object made from a meaningful wood — can be given to mark a birth, a marriage, a graduation, or a loss. The key is the story: write it down and include it with the piece. A small tag identifying the wood, where it came from, and why it was chosen transforms a beautiful object into a family heirloom." },
+  "small-box-gift": { label: "Small Box as Gift Vessel", text: "A small lidded box is the ideal container for another gift — a ring, a folded note, a first tooth, a lock of hair. The box itself becomes the primary gift. Size it to hold something specific and the recipient will immediately feel the care taken. Line the interior with a small piece of felt glued in with PVA." }
+};
+
+function toggleCard(el, event) {
+  // Only toggle if clicking on the header area (not inside expanded detail/image)
+  if (event) {
+    var detail = el.querySelector('.project-detail');
+    var imgWrap = el.querySelector('.project-img-wrap');
+    var infoPanel = el.querySelector('.info-panel');
+    if ((detail && detail.contains(event.target)) ||
+        (imgWrap && imgWrap.contains(event.target)) ||
+        (infoPanel && infoPanel.contains(event.target))) return;
+  }
+  var isOpen = el.classList.contains('expanded');
+  document.querySelectorAll('.project.expanded').forEach(function(p) { p.classList.remove('expanded'); });
+  document.querySelectorAll('.chip.active').forEach(function(c) { c.classList.remove('active'); });
+  document.querySelectorAll('.info-panel.visible').forEach(function(p) { p.classList.remove('visible'); });
+  if (!isOpen) el.classList.add('expanded');
+}
+
+document.addEventListener('click', function(e) {
+  var chip = e.target.closest('.chip');
+  if (!chip) return;
+  e.stopPropagation();
+  var key = chip.getAttribute('data-key');
+  var info = INFO[key];
+  if (!info) return;
+  var body = chip.closest('.project-body');
+  var panel = body.querySelector('.info-panel');
+  var labelEl = panel.querySelector('.info-label');
+  var textEl = panel.querySelector('.info-text');
+  var allChips = body.querySelectorAll('.chip');
+  if (chip.classList.contains('active')) {
+    chip.classList.remove('active');
+    panel.classList.remove('visible');
+    return;
+  }
+  allChips.forEach(function(c) { c.classList.remove('active'); });
+  chip.classList.add('active');
+  labelEl.textContent = info.label;
+  textEl.textContent = info.text;
+  panel.classList.add('visible');
+});
+
+// ── Lightbox ──────────────────────────────────────────────
+var lb = {
+  scale: 1, minScale: 0.5, maxScale: 4,
+  panX: 0, panY: 0,
+  dragging: false, lastX: 0, lastY: 0,
+  pinchDist: null
+};
+
+function lbApply() {
+  var svg = document.querySelector('#lb-svg-wrap svg');
+  if (!svg) return;
+  svg.style.transform = 'translate(' + lb.panX + 'px,' + lb.panY + 'px) scale(' + lb.scale + ')';
+  document.getElementById('lb-scale-label').textContent = Math.round(lb.scale * 100) + '%';
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function lbZoom(delta) {
+  lb.scale = Math.min(lb.maxScale, Math.max(lb.minScale, lb.scale + delta));
+  lbApply();
+}
+
+function lbReset() {
+  lb.scale = 1; lb.panX = 0; lb.panY = 0;
+  lbApply();
+}
+
+function openLightbox(svgEl, caption) {
+  var wrap = document.getElementById('lb-svg-wrap');
+  wrap.innerHTML = '';
+  var clone = svgEl.cloneNode(true);
+  clone.style.width = '100%';
+  clone.style.height = 'auto';
+  clone.removeAttribute('class');
+  wrap.appendChild(clone);
+  document.getElementById('lb-caption').textContent = caption || '';
+  lb.scale = 1; lb.panX = 0; lb.panY = 0;
+  lbApply();
+  document.getElementById('lightbox').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+
+// click SVG thumbnails to open lightbox
+document.addEventListener('click', function(e) {
+  if (e.target.closest('.project-video-link')) return;
+  var svg = e.target.closest('.project-img');
+  if (!svg) return;
+  e.stopPropagation();
+  var caption = svg.closest('.project-img-wrap').querySelector('.project-img-caption');
+  openLightbox(svg, caption ? caption.textContent : '');
+});
+
+// close on backdrop click
+document.getElementById('lightbox').addEventListener('click', function(e) {
+  if (e.target === this) closeLightbox();
+});
+
+// keyboard
+document.addEventListener('keydown', function(e) {
+  if (!document.getElementById('lightbox').classList.contains('active')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === '=' || e.key === '+') lbZoom(0.25);
+  if (e.key === '-') lbZoom(-0.25);
+  if (e.key === '0') lbReset();
+});
+
+// mouse wheel zoom
+document.getElementById('lb-svg-wrap').addEventListener('wheel', function(e) {
+  e.preventDefault();
+  var delta = e.deltaY < 0 ? 0.15 : -0.15;
+  lb.scale = Math.min(lb.maxScale, Math.max(lb.minScale, lb.scale + delta));
+  lbApply();
+}, { passive: false });
+
+// mouse drag pan
+var wrap = document.getElementById('lb-svg-wrap');
+wrap.addEventListener('mousedown', function(e) {
+  lb.dragging = true; lb.lastX = e.clientX; lb.lastY = e.clientY;
+  wrap.classList.add('grabbing');
+});
+document.addEventListener('mousemove', function(e) {
+  if (!lb.dragging) return;
+  lb.panX += e.clientX - lb.lastX;
+  lb.panY += e.clientY - lb.lastY;
+  lb.lastX = e.clientX; lb.lastY = e.clientY;
+  lbApply();
+});
+document.addEventListener('mouseup', function() {
+  lb.dragging = false;
+  wrap.classList.remove('grabbing');
+});
+
+// touch pinch-zoom + pan
+wrap.addEventListener('touchstart', function(e) {
+  if (e.touches.length === 2) {
+    lb.pinchDist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+  } else if (e.touches.length === 1) {
+    lb.dragging = true;
+    lb.lastX = e.touches[0].clientX;
+    lb.lastY = e.touches[0].clientY;
+  }
+}, { passive: true });
+
+wrap.addEventListener('touchmove', function(e) {
+  e.preventDefault();
+  if (e.touches.length === 2 && lb.pinchDist !== null) {
+    var newDist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+    var ratio = newDist / lb.pinchDist;
+    lb.scale = Math.min(lb.maxScale, Math.max(lb.minScale, lb.scale * ratio));
+    lb.pinchDist = newDist;
+    lbApply();
+  } else if (e.touches.length === 1 && lb.dragging) {
+    lb.panX += e.touches[0].clientX - lb.lastX;
+    lb.panY += e.touches[0].clientY - lb.lastY;
+    lb.lastX = e.touches[0].clientX;
+    lb.lastY = e.touches[0].clientY;
+    lbApply();
+  }
+}, { passive: false });
+
+wrap.addEventListener('touchend', function() {
+  lb.dragging = false; lb.pinchDist = null;
+});
+
+}); // end DOMContentLoaded
+
+// ── Checklist (global scope — called via onclick attributes) ──
+function toggleChecklist() {
+  document.getElementById('checklist-section').classList.toggle('open');
+}
+
+function updateChecklistProgress() {
+  var all = document.querySelectorAll('.checklist-item');
+  var checked = document.querySelectorAll('.checklist-item.checked');
+  var pct = all.length ? (checked.length / all.length * 100) : 0;
+  document.getElementById('checklist-fill').style.width = pct + '%';
+  document.getElementById('checklist-count').textContent = checked.length + ' / ' + all.length;
+  var cats = ['setup', 'tools', 'materials', 'safety'];
+  cats.forEach(function(cat) {
+    var catItems = document.querySelectorAll('[data-cat="' + cat + '"]');
+    var catChecked = Array.from(catItems).filter(function(el) { return el.classList.contains('checked'); });
+    var el = document.getElementById('count-' + cat);
+    if (el) el.textContent = catChecked.length + '/' + catItems.length;
+  });
+}
+
+function showSaved() {
+  var note = document.getElementById('saved-note');
+  note.classList.add('show');
+  clearTimeout(note._t);
+  note._t = setTimeout(function() { note.classList.remove('show'); }, 1800);
+}
+
+function checkAll() {
+  document.querySelectorAll('.checklist-item').forEach(function(item) {
+    item.classList.add('checked');
+    item.querySelector('input').checked = true;
+  });
+  updateChecklistProgress();
+  showSaved();
+}
+
+function clearAll() {
+  document.querySelectorAll('.checklist-item').forEach(function(item) {
+    item.classList.remove('checked');
+    item.querySelector('input').checked = false;
+  });
+  updateChecklistProgress();
+}
+
+function toggleCheckItem(el) {
+  el.classList.toggle('checked');
+  el.querySelector('input').checked = el.classList.contains('checked');
+  updateChecklistProgress();
+  showSaved();
+}
+
+function printChecklist() {
+  var win = window.open('', '_blank', 'width=700,height=900');
+  var cats = document.querySelectorAll('.checklist-cat');
+  var date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  var allItems = document.querySelectorAll('.checklist-item');
+  var checkedItems = document.querySelectorAll('.checklist-item.checked');
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Lathe Checklist</title>';
+  html += '<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet">';
+  html += '<style>';
+  html += '*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }';
+  html += 'body { font-family: "DM Sans", sans-serif; background: #f5f0e8; color: #1a1a18; padding: 36px 40px; }';
+  html += '.print-header { border-bottom: 2px solid #1a1a18; padding-bottom: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end; }';
+  html += '.print-title { font-family: "Playfair Display", serif; font-size: 26px; }';
+  html += '.print-meta { font-family: "DM Mono", monospace; font-size: 10px; color: #b8a898; text-align: right; line-height: 1.7; }';
+  html += '.print-progress { font-family: "DM Mono", monospace; font-size: 11px; color: #c4633a; margin-bottom: 20px; letter-spacing: 0.05em; }';
+  html += '.print-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }';
+  html += '.print-cat { background: #ede8dc; border: 1px solid #d0c8bc; padding: 14px 16px; }';
+  html += '.print-cat-title { font-family: "DM Mono", monospace; font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: #c4633a; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #ddd6cc; }';
+  html += '.print-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 7px; }';
+  html += '.print-box { width: 12px; height: 12px; min-width: 12px; border: 1.5px solid #a09080; margin-top: 2px; display: flex; align-items: center; justify-content: center; font-size: 9px; }';
+  html += '.print-box.ticked { background: #1a1a18; border-color: #1a1a18; color: #f5f0e8; }';
+  html += '.print-label { font-size: 11.5px; color: #4a4540; line-height: 1.4; }';
+  html += '.print-label.done { color: #3a3028; text-decoration: line-through; text-decoration-color: #6a5e52; }';
+  html += '.print-note { font-family: "DM Mono", monospace; font-size: 9px; color: #b8a898; display: block; }';
+  html += '.print-footer { margin-top: 22px; padding-top: 14px; border-top: 1px solid #d0c8bc; font-family: "DM Mono", monospace; font-size: 9px; color: #b8a898; letter-spacing: 0.08em; }';
+  html += '@media print { body { padding: 20px; background: white; } }';
+  html += '</style></head><body>';
+  html += '<div class="print-header"><div><div style="font-family:\'DM Mono\',monospace;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:#c4633a;margin-bottom:5px">Wood Lathe — Before You Begin</div><div class="print-title">Materials & Tools Checklist</div></div><div class="print-meta">Printed: ' + date + '<br>' + checkedItems.length + ' of ' + allItems.length + ' items checked</div></div>';
+  html += '<div class="print-progress">■ ' + checkedItems.length + ' / ' + allItems.length + ' items ready</div>';
+  html += '<div class="print-grid">';
+
+  var catDefs = [
+    { id: 'setup', label: '⚙ Lathe Setup' },
+    { id: 'tools', label: '✦ Cutting Tools' },
+    { id: 'materials', label: '◈ Wood & Materials' },
+    { id: 'safety', label: '◉ Safety' }
+  ];
+
+  catDefs.forEach(function(cat) {
+    var items = document.querySelectorAll('[data-cat="' + cat.id + '"]');
+    html += '<div class="print-cat"><div class="print-cat-title">' + cat.label + '</div>';
+    items.forEach(function(item) {
+      var isChecked = item.classList.contains('checked');
+      var labelEl = item.querySelector('.checklist-item-label');
+      var noteEl = item.querySelector('.checklist-item-note');
+      var labelText = labelEl ? labelEl.childNodes[0].textContent.trim() : '';
+      var noteText = noteEl ? noteEl.textContent.trim() : '';
+      html += '<div class="print-item">';
+      html += '<div class="print-box' + (isChecked ? ' ticked' : '') + '">' + (isChecked ? '✓' : '') + '</div>';
+      html += '<div class="print-label' + (isChecked ? ' done' : '') + '">' + labelText;
+      if (noteText) html += '<span class="print-note">' + noteText + '</span>';
+      html += '</div></div>';
+    });
+    html += '</div>';
+  });
+
+  html += '</div>';
+  html += '<div class="print-footer">Wood Lathe · Projects That Serve Others &nbsp;·&nbsp; lathe-projects-for-others.html</div>';
+  html += '</body></html>';
+  win.document.write(html);
+  win.document.close();
+  win.onload = function() { win.focus(); win.print(); };
+}
+
+document.addEventListener('DOMContentLoaded', updateChecklistProgress);
+
+/* ── Lathe Selector ── */
+function toggleSelector() {
+  document.getElementById('lathe-selector').classList.toggle('open');
+}
+
+var DT_RESULTS = {
+  'mini': {
+    title: 'Mini Benchtop Lathe',
+    subtitle: 'e.g. WEN 3421, VEVOR Mini Lathe',
+    details: ['10–12" swing, 18" between centers', 'Variable speed motor (1/3–1/2 HP)', 'Great for pens, small bowls, ornaments', 'Compact — fits on a workbench'],
+    tip: 'Perfect for getting started without a major investment. Upgrade later as your skills grow.'
+  },
+  'midi': {
+    title: 'Midi Lathe',
+    subtitle: 'e.g. Jet JWL-1221VS, Rikon 70-105',
+    details: ['12" swing, 20" between centers', 'Variable speed, reversible spindle', 'Cast iron construction for stability', 'Expandable with bed extensions'],
+    tip: 'The sweet spot for most hobbyists — versatile, durable, room to grow.'
+  },
+  'full-entry': {
+    title: 'Full-Size Lathe (Entry Level)',
+    subtitle: 'e.g. Jet JWL-1442EVS, Powermatic 3520C (used)',
+    details: ['14" swing, 42" between centers', '1–2 HP motor', 'Handles furniture legs, large platters', 'Freestanding — needs dedicated floor space'],
+    tip: 'Buy used to get a premium lathe at a hobbyist price.'
+  },
+  'heavy-midi': {
+    title: 'Heavy-Duty Midi or Full-Size Lathe',
+    subtitle: 'e.g. Powermatic 3520C, Laguna Revo 18|36',
+    details: ['18–20" swing for large bowls', '2 HP+ motor with electronic variable speed', 'Cast iron bed, minimal vibration', 'Swing-away headstock for outboard turning'],
+    tip: 'Invest in a lathe that won\'t limit your creativity as commissions grow.'
+  },
+  'full-spindle': {
+    title: 'Full-Size Spindle Lathe',
+    subtitle: 'e.g. Jet JWL-1642EVS, General International 25-900',
+    details: ['Long bed (42"–60") for chair legs, columns', 'Copy attachment optional for repeated pieces', '1.5–2 HP motor', 'Steady rest included or available'],
+    tip: 'Longer bed capacity is the key spec for production spindle work.'
+  },
+  'midi-pen': {
+    title: 'Midi Lathe + Index Head',
+    subtitle: 'e.g. Nova Comet II, PSI Woodworking Turncrafter Commander',
+    details: ['12" swing sufficient for pen production', 'Index head for fluting and segmenting', 'High-speed range (3,000–4,000 RPM) for small work', 'Look for a hollow tailstock for pen mandrels'],
+    tip: 'Pen turners prize high-speed accuracy over raw power.'
+  },
+  'premium': {
+    title: 'Premium Full-Size Lathe',
+    subtitle: 'e.g. Powermatic 4224B, Robust American Beauty',
+    details: ['24"+ swing, 36"–48" between centers', '2–3 HP variable speed motor', 'Heavy cast iron for all-day use', 'Excellent tool rest and banjo systems'],
+    tip: 'A quality lathe at this level is a lifetime investment — don\'t skimp.'
+  },
+  'cnc': {
+    title: 'Industrial CNC Wood Lathe',
+    subtitle: 'e.g. SCM Record 160, Centauro Polo 1000',
+    details: ['CNC-controlled for repeatable production', 'Auto tool changers, pattern libraries', '5–10+ HP industrial motors', 'Requires 3-phase power and significant floor space'],
+    tip: 'Evaluate ROI carefully — these are $10K–$100K+ investments.'
+  }
+};
+
+var dtHistory = [{ step: 'dt-s0', label: 'Start', progress: 0 }];
+
+var DT_STEP_MAP = {
+  'hobby':     'dt-s1-hobby',
+  'semi':      'dt-s1-semi',
+  'pro':       'dt-s1-pro',
+  'hobby-mid': 'dt-s2-hobby-mid'
+};
+
+function dtGo(key, label, progressStep) {
+  var stepId = DT_STEP_MAP[key] || ('dt-s1-' + key);
+  dtHistory.push({ step: stepId, label: label, progress: progressStep });
+  dtShow(stepId, label, progressStep);
+}
+
+function dtResult(key) {
+  var r = DT_RESULTS[key];
+  if (!r) return;
+  var html = '<div class="dt-result-header">'
+    + '<div class="dt-result-label">Recommended Lathe</div>'
+    + '<div class="dt-result-title">' + r.title + '</div>'
+    + '<div class="dt-result-subtitle">' + r.subtitle + '</div>'
+    + '</div><div class="dt-result-body">'
+    + '<ul class="dt-result-list">' + r.details.map(function(d){ return '<li>' + d + '</li>'; }).join('') + '</ul>'
+    + '<div class="dt-result-tip">💡 ' + r.tip + '</div>'
+    + '<button type="button" class="dt-restart" onclick="dtReset()">Start Over</button>'
+    + '</div>';
+  document.getElementById('dt-result-card').innerHTML = html;
+  dtHistory.push({ step: 'dt-result-view', label: r.title, progress: 4 });
+  dtShow('dt-result-view', r.title, 4);
+}
+
+function dtShow(stepId, label, progress) {
+  var container = document.getElementById('lathe-selector');
+  container.querySelectorAll('.dt-step').forEach(function(s){ s.classList.remove('active'); });
+  var el = document.getElementById(stepId);
+  if (el) el.classList.add('active');
+  var pct = Math.round((progress / 4) * 100);
+  document.getElementById('dt-fill').style.width = pct + '%';
+  document.getElementById('dt-pct').textContent = pct + '%';
+  document.getElementById('dt-step-label').textContent = label || 'Begin';
+  // Build breadcrumb
+  var bc = document.getElementById('dt-breadcrumb');
+  bc.innerHTML = dtHistory.slice(1).map(function(h, i){
+    return (i > 0 ? '<span class="dt-breadcrumb-sep">›</span>' : '') + '<span>' + h.label + '</span>';
+  }).join('');
+}
+
+function dtBack() {
+  if (dtHistory.length <= 1) return;
+  dtHistory.pop();
+  var prev = dtHistory[dtHistory.length - 1];
+  var container = document.getElementById('lathe-selector');
+  container.querySelectorAll('.dt-step').forEach(function(s){ s.classList.remove('active'); });
+  var el = document.getElementById(prev.step);
+  if (el) el.classList.add('active');
+  var pct = Math.round((prev.progress / 4) * 100);
+  document.getElementById('dt-fill').style.width = pct + '%';
+  document.getElementById('dt-pct').textContent = pct + '%';
+  document.getElementById('dt-step-label').textContent = prev.label || 'Begin';
+  var bc = document.getElementById('dt-breadcrumb');
+  bc.innerHTML = dtHistory.slice(1).map(function(h, i){
+    return (i > 0 ? '<span class="dt-breadcrumb-sep">›</span>' : '') + '<span>' + h.label + '</span>';
+  }).join('');
+}
+
+function dtReset() {
+  dtHistory = [{ step: 'dt-s0', label: 'Start', progress: 0 }];
+  var container = document.getElementById('lathe-selector');
+  container.querySelectorAll('.dt-step').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById('dt-s0').classList.add('active');
+  document.getElementById('dt-fill').style.width = '0%';
+  document.getElementById('dt-pct').textContent = '0%';
+  document.getElementById('dt-step-label').textContent = 'Begin';
+  document.getElementById('dt-breadcrumb').innerHTML = '';
+}
+
+function toggleTimber() {
+  var section = document.getElementById('timber-section');
+  section.classList.toggle('open');
+}
+
+// Ensure timber section is open when following index links
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.timber-index-link').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      var section = document.getElementById('timber-section');
+      if (!section.classList.contains('open')) {
+        e.preventDefault();
+        section.classList.add('open');
+        var targetId = this.getAttribute('href').slice(1);
+        setTimeout(function() {
+          var target = document.getElementById(targetId);
+          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 520);
+      }
+    });
+  });
+});
+</script>
+<!-- Lightbox -->
+<div id="lightbox">
+  <div id="lb-stage">
+    <button id="lb-close" onclick="closeLightbox()">✕ CLOSE</button>
+    <div id="lb-svg-wrap"></div>
+    <div id="lb-controls">
+      <button class="lb-btn" onclick="lbZoom(-0.25)">−</button>
+      <span id="lb-scale-label">100%</span>
+      <button class="lb-btn" onclick="lbZoom(+0.25)">+</button>
+      <button class="lb-btn" title="Reset" onclick="lbReset()">⟳</button>
+    </div>
+    <div id="lb-caption"></div>
+    <div id="lb-hint">scroll to zoom · drag to pan · pinch to zoom on touch</div>
+  </div>
+</div>
+
+
+<!-- Back to Top Button -->
+<button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">Top</button>
+<style>
+  #back-to-top {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 10px 16px;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, background 0.2s;
+  }
+  #back-to-top.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  #back-to-top:hover {
+    background: var(--clay);
+  }
+</style>
+<script>
+  (function(){
+    var btn = document.getElementById('back-to-top');
+    window.addEventListener('scroll', function(){
+      if (window.scrollY > 200) btn.classList.add('visible');
+      else btn.classList.remove('visible');
+    }, {passive: true});
+  })();
+</script>
+</body>
+</html>
